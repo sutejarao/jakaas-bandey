@@ -26,7 +26,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!loading && !player) {
-      router.replace('/jakaas_bandey/auth');
+      router.replace('/auth');
     }
   }, [loading, player, router]);
 

@@ -13,7 +13,7 @@ export default function AuthCallbackPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         subscription.unsubscribe();
-        router.replace('/jakaas_bandey');
+        router.replace('/');
       }
     });
 
@@ -21,7 +21,7 @@ export default function AuthCallbackPage() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         subscription.unsubscribe();
-        router.replace('/jakaas_bandey');
+        router.replace('/');
       }
     });
 
