@@ -32,7 +32,7 @@ export default function HomePage() {
     if (!monthYear) return;
     async function fetchLeaderboard() {
       const [playersRes, nominationsRes] = await Promise.all([
-        supabase.from('players').select('id, name, avatar_initial'),
+        supabase.from('players').select('id, name, avatar_initial').in('role', ['player', 'admin']),
         supabase.from('nominations').select('to_player_id, coins').eq('month_year', monthYear),
       ]);
 
