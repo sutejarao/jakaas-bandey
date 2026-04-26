@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 const containerStyle: React.CSSProperties = {
@@ -17,19 +17,18 @@ const containerStyle: React.CSSProperties = {
 
 function CallbackHandler() {
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   useEffect(() => {
     const code = searchParams.get('code');
     if (!code) {
-      router.replace('/');
+      window.location.href = '/jakaas_bandey';
       return;
     }
 
     (async () => {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       if (error || !data.session) {
-        router.replace('/auth');
+        window.location.href = '/jakaas_bandey/auth';
         return;
       }
 
@@ -52,9 +51,9 @@ function CallbackHandler() {
         });
       }
 
-      router.replace('/');
+      window.location.href = '/jakaas_bandey';
     })();
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   return <div style={containerStyle}>Signing you in…</div>;
 }
