@@ -19,32 +19,27 @@ export default function HomePage() {
   const { player } = useAuth();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [fetching, setFetching] = useState(true);
-  const [monthYear, setMonthYear] = useState('');
   const [monthLabel, setMonthLabel] = useState('');
 
   useEffect(() => {
     const my = currentMonthYear();
-    setMonthYear(my);
     setMonthLabel(formatMonthYear(my));
-  }, []);
 
-  useEffect(() => {
-    if (!monthYear) return;
     async function fetchLeaderboard() {
       const [playersRes, nominationsRes] = await Promise.all([
-        supabase.from('players').select('id, name, avatar_initial').in('role', ['player', 'admin']),
-        supabase.from('nominations').select('to_player_id, coins').eq('month_year', monthYear),
+        supabase.from('players').select('id, name, avatar_initial, role'),
+        supabase.from('nominations').select('to_player_id, coins').eq('month_year', my),
       ]);
 
-      if (!playersRes.data) { setFetching(false); return; }
+      const players = playersRes.data ?? [];
+      const active = players.filter((p) => p.role === 'active' || p.role === 'admin');
 
-      // Sum coins per player from nominations
       const coinsMap = new Map<string, number>();
-      for (const nom of nominationsRes.data || []) {
+      for (const nom of nominationsRes.data ?? []) {
         coinsMap.set(nom.to_player_id, (coinsMap.get(nom.to_player_id) ?? 0) + nom.coins);
       }
 
-      const all: LeaderboardEntry[] = playersRes.data.map((p) => ({
+      const all: LeaderboardEntry[] = active.map((p) => ({
         player_id: p.id,
         name: p.name,
         initial: p.avatar_initial || p.name.charAt(0),
@@ -55,8 +50,9 @@ export default function HomePage() {
       setEntries(all);
       setFetching(false);
     }
+
     fetchLeaderboard();
-  }, [monthYear]);
+  }, []);
 
   return (
     <AppShell>
