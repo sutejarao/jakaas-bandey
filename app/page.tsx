@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { supabase, currentMonthYear, formatMonthYear } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
@@ -32,32 +31,28 @@ export default function HomePage() {
   useEffect(() => {
     if (!monthYear) return;
     async function fetchLeaderboard() {
-      const { data } = await supabase
-        .from('nominations')
-        .select('to_player_id, coins, players!nominations_to_player_id_fkey(name, avatar_initial)')
-        .eq('month_year', monthYear);
+      const [playersRes, nominationsRes] = await Promise.all([
+        supabase.from('players').select('id, name, avatar_initial'),
+        supabase.from('nominations').select('to_player_id, coins').eq('month_year', monthYear),
+      ]);
 
-      if (!data) { setFetching(false); return; }
+      if (!playersRes.data) { setFetching(false); return; }
 
-      const map = new Map<string, LeaderboardEntry>();
-      for (const row of data) {
-        const p = (Array.isArray(row.players) ? row.players[0] : row.players) as { name: string; avatar_initial: string } | null;
-        if (!p) continue;
-        const existing = map.get(row.to_player_id);
-        if (existing) {
-          existing.coins += row.coins;
-        } else {
-          map.set(row.to_player_id, {
-            player_id: row.to_player_id,
-            name: p.name,
-            initial: p.avatar_initial || p.name.charAt(0),
-            coins: row.coins,
-          });
-        }
+      // Sum coins per player from nominations
+      const coinsMap = new Map<string, number>();
+      for (const nom of nominationsRes.data || []) {
+        coinsMap.set(nom.to_player_id, (coinsMap.get(nom.to_player_id) ?? 0) + nom.coins);
       }
 
-      const sorted = Array.from(map.values()).sort((a, b) => b.coins - a.coins);
-      setEntries(sorted);
+      const all: LeaderboardEntry[] = playersRes.data.map((p) => ({
+        player_id: p.id,
+        name: p.name,
+        initial: p.avatar_initial || p.name.charAt(0),
+        coins: coinsMap.get(p.id) ?? 0,
+      }));
+
+      all.sort((a, b) => b.coins - a.coins);
+      setEntries(all);
       setFetching(false);
     }
     fetchLeaderboard();
@@ -110,20 +105,6 @@ export default function HomePage() {
 
         {fetching ? (
           <div style={{ textAlign: 'center', padding: '48px 0', color: '#52525a' }}>Loading…</div>
-        ) : entries.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '32px 0' }}>
-            <Image
-              src="/jakaas_bandey/illustrations/illus-empty-leaderboard.png"
-              alt="No nominations yet"
-              width={200}
-              height={160}
-              style={{ objectFit: 'contain', margin: '0 auto 16px', display: 'block' }}
-            />
-            <p style={{ color: '#71717a', fontSize: 15, fontWeight: 600 }}>
-              No nominations yet this month
-            </p>
-            <p style={{ color: '#52525a', fontSize: 13 }}>Be the first to nominate a teammate!</p>
-          </div>
         ) : (
           entries.map((entry, i) => (
             <LeaderboardRow

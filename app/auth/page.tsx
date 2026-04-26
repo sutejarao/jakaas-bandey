@@ -46,8 +46,8 @@ export default function AuthPage() {
       <Image
         src="/jakaas_bandey/logo-coin.png"
         alt="JB Coin"
-        width={120}
-        height={120}
+        width={800}
+        height={800}
         style={{ objectFit: 'cover', borderRadius: '50%', marginBottom: 28 }}
       />
       <h1 style={{ fontSize: 30, fontWeight: 900, color: '#ffffff', marginBottom: 8, textAlign: 'center' }}>

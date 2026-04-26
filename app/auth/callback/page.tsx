@@ -1,32 +1,29 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export default function AuthCallbackPage() {
-  const router = useRouter();
-
   useEffect(() => {
-    // With flowType:'pkce' and detectSessionInUrl:true, the Supabase client
-    // automatically exchanges the ?code= param on page load. Listen for sign-in.
+    // Listen for SIGNED_IN, then hard-reload so AuthProvider reinitialises
+    // with the session that Supabase just stored in localStorage.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         subscription.unsubscribe();
-        router.replace('/');
+        window.location.href = '/jakaas_bandey';
       }
     });
 
-    // Already signed in (e.g. code exchanged synchronously)
+    // Also check if the session is already present (code exchanged synchronously)
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         subscription.unsubscribe();
-        router.replace('/');
+        window.location.href = '/jakaas_bandey';
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [router]);
+  }, []);
 
   return (
     <div
