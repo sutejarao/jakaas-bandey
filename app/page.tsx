@@ -1,65 +1,158 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { supabase, currentMonthYear, formatMonthYear } from '@/lib/supabase';
+import { useAuth } from '@/lib/auth-context';
+import AppShell from '@/components/AppShell';
+import MonthBanner from '@/components/MonthBanner';
+import LeaderboardRow from '@/components/LeaderboardRow';
+
+type LeaderboardEntry = {
+  player_id: string;
+  name: string;
+  initial: string;
+  coins: number;
+};
+
+export default function HomePage() {
+  const { player } = useAuth();
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [fetching, setFetching] = useState(true);
+  const [monthYear, setMonthYear] = useState('');
+  const [monthLabel, setMonthLabel] = useState('');
+
+  useEffect(() => {
+    const my = currentMonthYear();
+    setMonthYear(my);
+    setMonthLabel(formatMonthYear(my));
+  }, []);
+
+  useEffect(() => {
+    if (!monthYear) return;
+    async function fetchLeaderboard() {
+      const { data } = await supabase
+        .from('nominations')
+        .select('to_player_id, coins, players!nominations_to_player_id_fkey(name, avatar_initial)')
+        .eq('month_year', monthYear);
+
+      if (!data) { setFetching(false); return; }
+
+      const map = new Map<string, LeaderboardEntry>();
+      for (const row of data) {
+        const p = (Array.isArray(row.players) ? row.players[0] : row.players) as { name: string; avatar_initial: string } | null;
+        if (!p) continue;
+        const existing = map.get(row.to_player_id);
+        if (existing) {
+          existing.coins += row.coins;
+        } else {
+          map.set(row.to_player_id, {
+            player_id: row.to_player_id,
+            name: p.name,
+            initial: p.avatar_initial || p.name.charAt(0),
+            coins: row.coins,
+          });
+        }
+      }
+
+      const sorted = Array.from(map.values()).sort((a, b) => b.coins - a.coins);
+      setEntries(sorted);
+      setFetching(false);
+    }
+    fetchLeaderboard();
+  }, [monthYear]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <AppShell>
+      <div style={{ padding: '20px 16px 0' }}>
+        {/* Header */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 16,
+          }}
+        >
+          <h1 style={{ fontSize: 22, fontWeight: 900, color: '#ffffff', margin: 0 }}>
+            🏏 JB Rewards
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <span
+            style={{
+              background: '#222226',
+              border: '1.5px solid #3a3a40',
+              borderRadius: 999,
+              padding: '4px 12px',
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#a1a1aa',
+            }}
           >
+            {monthLabel}
+          </span>
+        </div>
+
+        {/* Month banner */}
+        <MonthBanner />
+
+        {/* Leaderboard */}
+        <h2
+          style={{
+            fontSize: 16,
+            fontWeight: 800,
+            color: '#ffffff',
+            margin: '20px 0 12px',
+          }}
+        >
+          Leaderboard
+        </h2>
+
+        {fetching ? (
+          <div style={{ textAlign: 'center', padding: '48px 0', color: '#52525a' }}>Loading…</div>
+        ) : entries.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '32px 0' }}>
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/jakaas_bandey/illustrations/illus-empty-leaderboard.png"
+              alt="No nominations yet"
+              width={200}
+              height={160}
+              style={{ objectFit: 'contain', margin: '0 auto 16px', display: 'block' }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+            <p style={{ color: '#71717a', fontSize: 15, fontWeight: 600 }}>
+              No nominations yet this month
+            </p>
+            <p style={{ color: '#52525a', fontSize: 13 }}>Be the first to nominate a teammate!</p>
+          </div>
+        ) : (
+          entries.map((entry, i) => (
+            <LeaderboardRow
+              key={entry.player_id}
+              rank={i + 1}
+              name={entry.name}
+              initial={entry.initial}
+              coins={entry.coins}
+              isMe={entry.player_id === player?.id}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Sticky CTA */}
+      <div
+        style={{
+          position: 'sticky',
+          bottom: 80,
+          padding: '12px 16px',
+          background: 'linear-gradient(to top, #0f0f10 70%, transparent)',
+        }}
+      >
+        <Link href="/nominate" style={{ display: 'block' }}>
+          <button className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: 16 }}>
+            + Nominate someone
+          </button>
+        </Link>
+      </div>
+    </AppShell>
   );
 }

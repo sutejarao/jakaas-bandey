@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JB Reward App — Design System Exploration</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&family=Poppins:wght@400;600;700;800&family=Righteous&family=Baloo+2:wght@400;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1a1a1a; font-family: 'Nunito', sans-serif; }
+
+  .label {
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .swatch-row { display: flex; gap: 0; border-radius: 10px; overflow: hidden; border: 2px solid rgba(255,255,255,0.08); }
+  .swatch {
+    flex: 1;
+    height: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 6px 8px;
+    font-size: 11px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: flex 0.2s;
+    cursor: pointer;
+    min-width: 0;
+  }
+  .swatch:hover { flex: 2; }
+  .swatch .hex { font-size: 10px; opacity: 0.7; margin-top: 1px; }
+
+  .dark-card {
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .font-hero {
+    line-height: 1.1;
+    font-weight: 800;
+  }
+  .font-sub {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #aaa;
+    margin-top: 4px;
+  }
+  .font-sample-chars {
+    font-size: 13px;
+    color: #555;
+    letter-spacing: 1px;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .illus-placeholder {
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .rec-badge {
+    background: oklch(0.75 0.18 55);
+    color: #1a0a00;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  /* Mini dark UI preview */
+  .mini-ui {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,0.1);
+  }
+  .mini-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-weight: 800;
+    font-size: 15px;
+  }
+  .mini-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .mini-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .mini-coin {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .mini-btn {
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-weight: 800;
+    font-size: 14px;
+    font-family: 'Nunito', sans-serif;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+// ── ORANGE PALETTE DATA ──────────────────────────────────────
+const palettes = [
+  {
+    id: 'A',
+    name: 'Blaze',
+    mood: 'Hot, energetic, bold',
+    shades: [
+      { name: '50',  hex: '#fff3e0', text: '#1a1a1a' },
+      { name: '100', hex: '#ffe0b2', text: '#1a1a1a' },
+      { name: '200', hex: '#ffcc80', text: '#1a1a1a' },
+      { name: '300', hex: '#ffb74d', text: '#1a1a1a' },
+      { name: '400', hex: '#ffa726', text: '#1a1a1a' },
+      { name: '500', hex: '#FF6B00', text: '#fff' },
+      { name: '600', hex: '#e65100', text: '#fff' },
+      { name: '700', hex: '#bf360c', text: '#fff' },
+      { name: '800', hex: '#8d2100', text: '#fff' },
+      { name: '900', hex: '#5c1200', text: '#fff' },
+    ],
+    accent: '#FF6B00',
+    rec: true,
+  },
+  {
+    id: 'B',
+    name: 'Amber',
+    mood: 'Warm, golden, friendly',
+    shades: [
+      { name: '50',  hex: '#fffde7', text: '#1a1a1a' },
+      { name: '100', hex: '#fff9c4', text: '#1a1a1a' },
+      { name: '200', hex: '#fff176', text: '#1a1a1a' },
+      { name: '300', hex: '#ffd54f', text: '#1a1a1a' },
+      { name: '400', hex: '#ffca28', text: '#1a1a1a' },
+      { name: '500', hex: '#FFB300', text: '#1a1a1a' },
+      { name: '600', hex: '#FF8F00', text: '#fff' },
+      { name: '700', hex: '#E65100', text: '#fff' },
+      { name: '800', hex: '#BF360C', text: '#fff' },
+      { name: '900', hex: '#7C2D00', text: '#fff' },
+    ],
+    accent: '#FFB300',
+    rec: false,
+  },
+  {
+    id: 'C',
+    name: 'Tangerine',
+    mood: 'Playful, citrus, fun',
+    shades: [
+      { name: '50',  hex: '#fff8f0', text: '#1a1a1a' },
+      { name: '100', hex: '#ffe8cc', text: '#1a1a1a' },
+      { name: '200', hex: '#ffd099', text: '#1a1a1a' },
+      { name: '300', hex: '#ffb566', text: '#1a1a1a' },
+      { name: '400', hex: '#ff9a33', text: '#1a1a1a' },
+      { name: '500', hex: '#FF7F00', text: '#fff' },
+      { name: '600', hex: '#e06e00', text: '#fff' },
+      { name: '700', hex: '#b85a00', text: '#fff' },
+      { name: '800', hex: '#8f4500', text: '#fff' },
+      { name: '900', hex: '#5c2d00', text: '#fff' },
+    ],
+    accent: '#FF7F00',
+    rec: false,
+  },
+  {
+    id: 'D',
+    name: 'Ember',
+    mood: 'Deep, rich, premium',
+    shades: [
+      { name: '50',  hex: '#fff0e8', text: '#1a1a1a' },
+      { name: '100', hex: '#ffd5bc', text: '#1a1a1a' },
+      { name: '200', hex: '#ffb78e', text: '#1a1a1a' },
+      { name: '300', hex: '#ff9560', text: '#1a1a1a' },
+      { name: '400', hex: '#ff7a38', text: '#1a1a1a' },
+      { name: '500', hex: '#FF5A10', text: '#fff' },
+      { name: '600', hex: '#dd4500', text: '#fff' },
+      { name: '700', hex: '#aa3300', text: '#fff' },
+      { name: '800', hex: '#782100', text: '#fff' },
+      { name: '900', hex: '#3d1000', text: '#fff' },
+    ],
+    accent: '#FF5A10',
+    rec: false,
+  },
+];
+
+// ── DARK BG SHADES ───────────────────────────────────────────
+const darkScales = [
+  { name: 'Slate Black', bg900: '#0f0f0f', bg800: '#1a1a1a', bg700: '#262626', bg600: '#333', surface: '#1f1f1f', border: '#2e2e2e' },
+  { name: 'Warm Dark', bg900: '#130f0a', bg800: '#1e1610', bg700: '#2a1f15', bg600: '#3a2c1f', surface: '#221a10', border: '#3a2c1f' },
+  { name: 'Cool Dark', bg900: '#0c0f14', bg800: '#141920', bg700: '#1d2430', bg600: '#28313f', surface: '#161d28', border: '#232d3f' },
+];
+
+// ── FONTS ────────────────────────────────────────────────────
+const fonts = [
+  {
+    id: 'nunito',
+    name: 'Nunito',
+    tagline: 'Rounded, warm, super readable',
+    hero: 'font-family: Nunito, sans-serif',
+    style: { fontFamily: 'Nunito, sans-serif' },
+    weights: '400 · 600 · 700 · 800 · 900',
+    sample: 'JB Rewards',
+    sub: 'Nominate your teammates and earn coins every month 🏏',
+    chars: 'Aa Bb Cc 0123456789 !@£',
+    rec: true,
+    note: 'Best all-rounder — works as both heading and body. Rounded terminals feel friendly without being childish.',
+  },
+  {
+    id: 'fredoka',
+    name: 'Fredoka One',
+    tagline: 'Bold, bubbly, maximum fun',
+    style: { fontFamily: 'Fredoka One, cursive' },
+    weights: '400 only — pair with Nunito for body',
+    sample: 'JB Rewards',
+    sub: 'Nominate your teammates',
+    chars: 'Aa Bb Cc 0123456789',
+    rec: false,
+    note: 'Great for headings and big numbers. Pair with Nunito for body text. Very playful — may feel too casual.',
+  },
+  {
+    id: 'baloo',
+    name: 'Baloo 2',
+    tagline: 'Energetic, sporty, character',
+    style: { fontFamily: 'Baloo 2, cursive' },
+    weights: '400 · 600 · 700 · 800',
+    sample: 'JB Rewards',
+    sub: 'Nominate your teammates and earn coins every month 🏏',
+    chars: 'Aa Bb Cc 0123456789 !@£',
+    rec: false,
+    note: 'Has great personality — slightly sporty feel. Works well at large sizes. Less ideal for dense body copy.',
+  },
+  {
+    id: 'outfit',
+    name: 'Outfit',
+    tagline: 'Clean, modern, versatile',
+    style: { fontFamily: 'Outfit, sans-serif' },
+    weights: '400 · 600 · 700 · 800',
+    sample: 'JB Rewards',
+    sub: 'Nominate your teammates and earn coins every month 🏏',
+    chars: 'Aa Bb Cc 0123456789 !@£',
+    rec: false,
+    note: 'More neutral — less "fun" but very clean on dark backgrounds. Good fallback if Nunito feels too round.',
+  },
+];
+
+// ── ILLUSTRATION STYLES ──────────────────────────────────────
+const illustStyles = [
+  {
+    id: 'bold-flat',
+    name: 'Bold Flat',
+    desc: 'Duolingo-style. Thick outlines, flat fills, expressive characters. Max energy, max fun.',
+    colors: ['#FF6B00', '#FFD166', '#06D6A0', '#1a1a1a'],
+    rec: true,
+    emoji: '🟠',
+    placeholder: 'Bold character\nthick outlines\nflat fills',
+    bg: '#1e1610',
+  },
+  {
+    id: 'hand-drawn',
+    name: 'Hand-Drawn',
+    desc: 'Sketchy, textured lines. Feels like a scrapbook or a pitch-side whiteboard. Very personal.',
+    colors: ['#FF7F00', '#fff', '#aaa', '#1a1a1a'],
+    rec: false,
+    emoji: '✏️',
+    placeholder: 'Sketchy lines\ntextured fills\nrough edges',
+    bg: '#1a1a1a',
+  },
+  {
+    id: '3d-clay',
+    name: '3D Clay / Emoji-style',
+    desc: 'Soft 3D renders — like Apple emojis or Notion avatars. Feels premium and modern.',
+    colors: ['#FF6B00', '#ffcba4', '#c2e0ff', '#fff'],
+    rec: false,
+    emoji: '🏏',
+    placeholder: 'Soft 3D shapes\nclay-like renders\nsoft shadows',
+    bg: '#141920',
+  },
+];
+
+// ── ILLUSTRATIONS NEEDED ─────────────────────────────────────
+const illustrationList = [
+  { screen: 'Onboarding', name: 'Welcome to JB', desc: 'Cheerful cricket player waving, coins floating around', priority: 'MVP' },
+  { screen: 'Leaderboard', name: 'Empty Leaderboard', desc: 'Empty podium with question marks — "No nominations yet!"', priority: 'MVP' },
+  { screen: 'Nominate', name: 'Nomination Sent!', desc: 'Celebration moment — confetti, coins flying, big thumbs up', priority: 'MVP' },
+  { screen: 'Nominate', name: 'Coin Selector', desc: 'Stack of gold coins that grow/shrink as you pick the amount', priority: 'MVP' },
+  { screen: 'Profile', name: 'Player Avatar Default', desc: 'Generic player silhouette / cricket helmet placeholder', priority: 'MVP' },
+  { screen: 'Month Reset', name: 'Trophy Moment', desc: 'Winner holding a trophy with coins raining down', priority: 'MVP' },
+  { screen: 'Pending', name: 'Locked Content', desc: 'Padlock over blurred leaderboard — "Pay to unlock"', priority: 'MVP' },
+  { screen: 'Month Reset', name: 'Reset Countdown', desc: 'Cricket scoreboard flipping to zero — "New month begins!"', priority: 'V2' },
+  { screen: 'History', name: 'Past Champions', desc: 'Hall of fame — framed portraits of past winners', priority: 'V2' },
+  { screen: 'Empty States', name: 'No Nominations Yet', desc: 'Sleepy cricket ball with Zzz — "No noms this month"', priority: 'V2' },
+  { screen: 'Error / 404', name: 'Lost on the Pitch', desc: 'Confused player looking at a map on a cricket field', priority: 'Later' },
+  { screen: 'Achievement', name: 'Badge Unlock', desc: 'Shiny badge bursting open with rays of light', priority: 'Later' },
+];
+
+// ── MINI LEADERBOARD PREVIEW ─────────────────────────────────
+function MiniLeaderboard({ accent, bg900, bg800, bg700, border, fontStyle, fontName }) {
+  const rows = [
+    { rank: '🥇', name: 'Dev Patel', coins: 47, color: accent },
+    { rank: '2', name: 'Rajan S.', coins: 38, color: null },
+    { rank: '3', name: 'You', coins: 31, color: null, you: true },
+  ];
+  return (
+    <div className="mini-ui" style={{ background: bg800, borderColor: border, ...fontStyle }}>
+      <div className="mini-topbar" style={{ background: bg900, color: '#fff', borderBottom: `1px solid ${border}` }}>
+        <span>🏏 JB Rewards</span>
+        <span style={{ fontSize: 12, color: '#888', fontWeight: 600 }}>May 2026</span>
+      </div>
+      {rows.map((r, i) => (
+        <div className="mini-row" key={i} style={{
+          background: r.you ? `${accent}15` : 'transparent',
+          borderColor: border,
+          borderLeft: r.you ? `3px solid ${accent}` : '3px solid transparent',
+        }}>
+          <span style={{ width: 20, fontSize: 14, textAlign: 'center' }}>{r.rank}</span>
+          <div className="mini-avatar" style={{ background: bg700 }} />
+          <span style={{ flex: 1, fontSize: 14, color: r.you ? accent : '#ddd', fontWeight: r.you ? 800 : 600 }}>{r.name}</span>
+          <div className="mini-coin" style={{ background: `${accent}22`, color: accent }}>{r.coins}</div>
+        </div>
+      ))}
+      <div style={{ padding: '10px 14px' }}>
+        <div className="mini-btn" style={{ background: accent, color: '#fff', width: '100%' }}>
+          + Nominate someone
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── MAIN ─────────────────────────────────────────────────────
+function App() {
+  const [selectedPalette, setSelectedPalette] = React.useState('A');
+  const [selectedDark, setSelectedDark] = React.useState(0);
+  const currentPalette = palettes.find(p => p.id === selectedPalette);
+  const currentDark = darkScales[selectedDark];
+
+  return (
+    <DesignCanvas title="JB Design System Exploration">
+
+      {/* ── SECTION 1: ORANGE PALETTES ── */}
+      <DCSection id="oranges" title="01 · Orange Palettes — Pick Your Base">
+
+        {palettes.map(palette => (
+          <DCArtboard key={palette.id} id={`pal-${palette.id}`} label={`${palette.name}${palette.rec ? ' ⭐ Recommended' : ''}`} width={440} height={360}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 4 }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: palette.accent }} />
+                <div>
+                  <div style={{ fontFamily: 'Nunito', fontWeight: 800, fontSize: 20, color: '#fff' }}>
+                    {palette.name}
+                    {palette.rec && <span className="rec-badge" style={{ marginLeft: 8 }}>⭐ PICK</span>}
+                  </div>
+                  <div style={{ fontSize: 13, color: '#888', fontFamily: 'Nunito' }}>{palette.mood}</div>
+                </div>
+              </div>
+
+              {/* Swatch row */}
+              <div className="swatch-row">
+                {palette.shades.map((s, i) => (
+                  <div key={i} className="swatch" style={{ background: s.hex, color: s.text }}>
+                    <div>{s.name}</div>
+                    <div className="hex">{s.hex}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Key tokens */}
+              <div style={{ display: 'flex', gap: 10 }}>
+                {[
+                  { label: 'Primary', swatch: palette.shades[5] },
+                  { label: 'Hover', swatch: palette.shades[6] },
+                  { label: 'Pressed', swatch: palette.shades[7] },
+                  { label: 'Tint', swatch: palette.shades[1] },
+                ].map((t, i) => (
+                  <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <div style={{ height: 32, borderRadius: 8, background: t.swatch.hex }} />
+                    <div style={{ fontSize: 11, color: '#666', fontFamily: 'Nunito', fontWeight: 700, textAlign: 'center' }}>{t.label}</div>
+                    <div style={{ fontSize: 10, color: '#555', fontFamily: 'Nunito', textAlign: 'center' }}>{t.swatch.hex}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mini preview button */}
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{
+                  background: palette.accent, color: '#fff',
+                  borderRadius: 50, padding: '8px 20px',
+                  fontFamily: 'Nunito', fontWeight: 800, fontSize: 14,
+                  flex: 1, textAlign: 'center'
+                }}>+ Nominate</div>
+                <div style={{
+                  background: `${palette.accent}20`, color: palette.accent,
+                  borderRadius: 50, padding: '8px 16px',
+                  fontFamily: 'Nunito', fontWeight: 800, fontSize: 14,
+                  border: `1.5px solid ${palette.accent}`,
+                }}>Profile</div>
+                <div style={{
+                  width: 36, height: 36, borderRadius: '50%',
+                  background: `${palette.accent}20`,
+                  border: `2px solid ${palette.accent}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 14, fontWeight: 900, color: palette.accent,
+                  fontFamily: 'Nunito'
+                }}>7</div>
+              </div>
+            </div>
+          </DCArtboard>
+        ))}
+
+      </DCSection>
+
+      {/* ── SECTION 2: DARK THEMES ── */}
+      <DCSection id="dark" title="02 · Dark Theme Backgrounds">
+
+        {darkScales.map((dark, di) => (
+          <DCArtboard key={di} id={`dark-${di}`} label={`${dark.name}${di === 1 ? ' ⭐ Recommended' : ''}`} width={340} height={440}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: 4 }}>
+              {/* BG stack */}
+              <div style={{ display: 'flex', gap: 6 }}>
+                {[
+                  { l: 'Base', c: dark.bg900 },
+                  { l: 'Surface', c: dark.bg800 },
+                  { l: 'Card', c: dark.bg700 },
+                  { l: 'Elevated', c: dark.bg600 },
+                  { l: 'Border', c: dark.border },
+                ].map((b, i) => (
+                  <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <div style={{ height: 40, borderRadius: 8, background: b.c, border: '1px solid rgba(255,255,255,0.06)' }} />
+                    <div style={{ fontSize: 10, color: '#555', fontFamily: 'Nunito', textAlign: 'center', fontWeight: 700 }}>{b.l}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mini leaderboard preview with Blaze orange */}
+              <MiniLeaderboard
+                accent="#FF6B00"
+                bg900={dark.bg900}
+                bg800={dark.bg800}
+                bg700={dark.bg700}
+                border={dark.border}
+                fontStyle={{ fontFamily: 'Nunito, sans-serif' }}
+                fontName="Nunito"
+              />
+
+              {/* Text on bg samples */}
+              <div style={{ background: dark.bg900, borderRadius: 10, padding: 12, border: `1px solid ${dark.border}` }}>
+                <div style={{ fontSize: 11, color: '#888', fontFamily: 'Nunito', fontWeight: 700, marginBottom: 6 }}>TEXT ON BACKGROUND</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', fontFamily: 'Nunito' }}>Primary text</div>
+                <div style={{ fontSize: 14, color: '#aaa', fontFamily: 'Nunito', marginTop: 2 }}>Secondary text — readable</div>
+                <div style={{ fontSize: 12, color: '#555', fontFamily: 'Nunito', marginTop: 2 }}>Muted / disabled text</div>
+              </div>
+            </div>
+          </DCArtboard>
+        ))}
+
+      </DCSection>
+
+      {/* ── SECTION 3: FONTS ── */}
+      <DCSection id="fonts" title="03 · Google Font Options">
+
+        {fonts.map(font => (
+          <DCArtboard key={font.id} id={`font-${font.id}`} label={`${font.name}${font.rec ? ' ⭐ Recommended' : ''}`} width={400} height={360}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontFamily: 'Nunito', fontWeight: 800, fontSize: 14, color: '#fff' }}>
+                    {font.name}
+                    {font.rec && <span className="rec-badge" style={{ marginLeft: 8 }}>⭐ PICK</span>}
+                  </div>
+                  <div style={{ fontSize: 12, color: '#888', fontFamily: 'Nunito' }}>{font.tagline}</div>
+                </div>
+                <div style={{ fontSize: 11, color: '#555', fontFamily: 'Nunito' }}>{font.weights}</div>
+              </div>
+
+              {/* Big hero sample */}
+              <div style={{ background: '#111', borderRadius: 12, padding: 16 }}>
+                <div className="font-hero" style={{ ...font.style, fontSize: 42, color: '#FF6B00' }}>{font.sample}</div>
+                <div style={{ ...font.style, fontSize: 15, color: '#ccc', marginTop: 6, lineHeight: 1.5 }}>{font.sub}</div>
+                <div style={{ ...font.style, fontSize: 12, color: '#555', marginTop: 8, letterSpacing: 1 }}>{font.chars}</div>
+              </div>
+
+              {/* Size scale */}
+              <div style={{ background: '#0f0f0f', borderRadius: 10, padding: 12 }}>
+                {[
+                  { size: 32, weight: 800, label: 'H1 — Page title', text: 'Leaderboard' },
+                  { size: 20, weight: 700, label: 'H2 — Section', text: 'This Month' },
+                  { size: 15, weight: 600, label: 'Body', text: 'Dev nominated Rajan for Best Catch' },
+                  { size: 12, weight: 600, label: 'Caption', text: 'NOMINATIONS · MAY 2026' },
+                ].map((s, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
+                    <div style={{ width: 64, fontSize: 10, color: '#555', fontFamily: 'Nunito', fontWeight: 700 }}>{s.label}</div>
+                    <div style={{ ...font.style, fontSize: s.size, fontWeight: s.weight, color: '#fff', lineHeight: 1.2 }}>{s.text}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ fontSize: 12, color: '#666', fontFamily: 'Nunito', fontStyle: 'italic', lineHeight: 1.5 }}>{font.note}</div>
+            </div>
+          </DCArtboard>
+        ))}
+
+      </DCSection>
+
+      {/* ── SECTION 4: ILLUSTRATION STYLES ── */}
+      <DCSection id="illus-style" title="04 · Illustration Style Options">
+
+        {illustStyles.map(style => (
+          <DCArtboard key={style.id} id={`illus-${style.id}`} label={`${style.name}${style.rec ? ' ⭐ Recommended' : ''}`} width={380} height={460}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: 4 }}>
+              <div>
+                <div style={{ fontFamily: 'Nunito', fontWeight: 800, fontSize: 18, color: '#fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {style.name}
+                  {style.rec && <span className="rec-badge">⭐ PICK</span>}
+                </div>
+                <div style={{ fontSize: 13, color: '#888', fontFamily: 'Nunito', marginTop: 3, lineHeight: 1.5 }}>{style.desc}</div>
+              </div>
+
+              {/* Colour palette for this style */}
+              <div style={{ display: 'flex', gap: 6 }}>
+                {style.colors.map((c, i) => (
+                  <div key={i} style={{ width: 32, height: 32, borderRadius: 8, background: c, border: '1.5px solid rgba(255,255,255,0.1)' }} />
+                ))}
+              </div>
+
+              {/* 3 placeholder illustration slots */}
+              <div style={{ display: 'flex', gap: 8 }}>
+                {[
+                  { emoji: '🏅', label: 'Nomination\nSent' },
+                  { emoji: '🏆', label: 'Month\nWinner' },
+                  { emoji: '🪙', label: 'Coin\nSelector' },
+                ].map((item, i) => (
+                  <div key={i} className="illus-placeholder" style={{
+                    flex: 1, height: 110, background: style.bg,
+                    border: `2px dashed ${style.colors[0]}44`,
+                    color: style.colors[0],
+                    fontSize: 12,
+                  }}>
+                    <div style={{ fontSize: 32 }}>{item.emoji}</div>
+                    <div style={{ fontSize: 11, color: '#888', whiteSpace: 'pre-line', textAlign: 'center', fontFamily: 'Nunito', fontWeight: 700 }}>{item.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Style characteristics */}
+              <div style={{ background: '#111', borderRadius: 10, padding: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ fontSize: 11, color: '#666', fontFamily: 'Nunito', fontWeight: 700 }}>CHARACTERISTICS</div>
+                {style.id === 'bold-flat' && ['Thick black outlines (3-4px)', 'Flat colour fills', 'Expressive, simple faces', 'High contrast on dark bg', 'Works at small sizes too'].map((c, i) => (
+                  <div key={i} style={{ fontSize: 13, color: '#aaa', fontFamily: 'Nunito' }}>✓ {c}</div>
+                ))}
+                {style.id === 'hand-drawn' && ['Rough, imperfect lines', 'Textured / scratchy fills', 'Very personal and warm', 'Harder to make consistent', 'Needs a skilled illustrator'].map((c, i) => (
+                  <div key={i} style={{ fontSize: 13, color: '#aaa', fontFamily: 'Nunito' }}>{'i === 3 || i === 4' ? '⚠' : '✓'} {c}</div>
+                ))}
+                {style.id === '3d-clay' && ['Soft rounded 3D shapes', 'Pastel + saturated fills', 'Very modern / premium feel', 'Harder to produce quickly', 'Needs 3D software or AI gen'].map((c, i) => (
+                  <div key={i} style={{ fontSize: 13, color: '#aaa', fontFamily: 'Nunito' }}>✓ {c}</div>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {style.id === 'bold-flat' && ['Duolingo', 'Notion', 'Headspace'].map(ref => (
+                  <span key={ref} className="tag" style={{ background: '#222', color: '#666', fontFamily: 'Nunito' }}>ref: {ref}</span>
+                ))}
+                {style.id === 'hand-drawn' && ['Mailchimp', 'Basecamp', 'Linear'].map(ref => (
+                  <span key={ref} className="tag" style={{ background: '#222', color: '#666', fontFamily: 'Nunito' }}>ref: {ref}</span>
+                ))}
+                {style.id === '3d-clay' && ['Notion avatars', 'Apple emojis', 'Lottie'].map(ref => (
+                  <span key={ref} className="tag" style={{ background: '#222', color: '#666', fontFamily: 'Nunito' }}>ref: {ref}</span>
+                ))}
+              </div>
+            </div>
+          </DCArtboard>
+        ))}
+
+      </DCSection>
+
+      {/* ── SECTION 5: ILLUSTRATIONS NEEDED ── */}
+      <DCSection id="illus-list" title="05 · Illustrations Needed">
+
+        <DCArtboard id="illus-table" label="Full Illustration List" width={780} height={580}>
+          <div style={{ padding: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr auto', gap: 0, fontFamily: 'Nunito' }}>
+              {/* Header */}
+              {['Screen', 'Name', 'Description', 'Priority'].map((h, i) => (
+                <div key={i} style={{
+                  fontSize: 11, fontWeight: 800, color: '#555', letterSpacing: 1.5,
+                  textTransform: 'uppercase', padding: '8px 10px',
+                  borderBottom: '1px solid #222',
+                }}>
+                  {h}
+                </div>
+              ))}
+              {/* Rows */}
+              {illustrationList.map((ill, i) => (
+                <React.Fragment key={i}>
+                  <div style={{ padding: '10px', borderBottom: '1px solid #1a1a1a', fontSize: 13, color: '#666', display: 'flex', alignItems: 'center' }}>{ill.screen}</div>
+                  <div style={{ padding: '10px', borderBottom: '1px solid #1a1a1a', fontSize: 14, color: '#fff', fontWeight: 700, display: 'flex', alignItems: 'center' }}>{ill.name}</div>
+                  <div style={{ padding: '10px', borderBottom: '1px solid #1a1a1a', fontSize: 13, color: '#888', display: 'flex', alignItems: 'center', lineHeight: 1.4 }}>{ill.desc}</div>
+                  <div style={{ padding: '10px', borderBottom: '1px solid #1a1a1a', display: 'flex', alignItems: 'center' }}>
+                    <span style={{
+                      padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 800,
+                      background: ill.priority === 'MVP' ? '#FF6B00' : ill.priority === 'V2' ? '#2a2000' : '#1a1a1a',
+                      color: ill.priority === 'MVP' ? '#fff' : ill.priority === 'V2' ? '#ffb300' : '#555',
+                      border: ill.priority === 'Later' ? '1px solid #333' : 'none',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {ill.priority}
+                    </span>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </DCArtboard>
+
+        <DCArtboard id="illus-notes" label="Illustration Brief Notes" width={320} height={580}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: 4, fontFamily: 'Nunito' }}>
+            <div style={{ background: '#1e1610', borderRadius: 12, padding: 16, border: '1.5px solid #3a2c1f' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#FF6B00', marginBottom: 8 }}>Style Brief</div>
+              <div style={{ fontSize: 13, color: '#aaa', lineHeight: 1.6 }}>
+                Use <b style={{ color: '#fff' }}>Bold Flat</b> style throughout.<br />
+                Primary palette: <b style={{ color: '#FF6B00' }}>Blaze orange</b> + <b style={{ color: '#FFD166' }}>gold</b> + white on dark.<br />
+                All illustrations should feel <b style={{ color: '#fff' }}>sporty, joyful and energetic</b> — like cricket sticker packs, not corporate icons.
+              </div>
+            </div>
+
+            <div style={{ background: '#111', borderRadius: 12, padding: 16, border: '1.5px solid #222' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', marginBottom: 8 }}>Recommended Sizes</div>
+              {[
+                { use: 'Hero / onboarding', size: '320×280px' },
+                { use: 'Empty states', size: '200×180px' },
+                { use: 'Confirmation screen', size: '240×200px' },
+                { use: 'Avatar placeholder', size: '80×80px (circle)' },
+                { use: 'Coin / badge icon', size: '48×48px' },
+              ].map((s, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <div style={{ fontSize: 12, color: '#666' }}>{s.use}</div>
+                  <div style={{ fontSize: 12, color: '#FF6B00', fontWeight: 700 }}>{s.size}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: '#111', borderRadius: 12, padding: 16, border: '1.5px solid #222' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#fff', marginBottom: 8 }}>Format</div>
+              <div style={{ fontSize: 13, color: '#aaa', lineHeight: 1.6 }}>
+                Export as <b style={{ color: '#fff' }}>SVG</b> for scalability + small file size.<br />
+                Lottie JSON for any animated variants (celebration, coin spin).<br />
+                PNG fallback at 2× for older browsers.
+              </div>
+            </div>
+
+            <div style={{ background: '#1e1610', borderRadius: 12, padding: 16, border: '1.5px solid #FF6B0030' }}>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#FF6B00', marginBottom: 6 }}>Where to source</div>
+              <div style={{ fontSize: 12, color: '#888', lineHeight: 1.7 }}>
+                → <b style={{ color: '#ccc' }}>undraw.co</b> — free, customisable<br />
+                → <b style={{ color: '#ccc' }}>storyset.com</b> — animated options<br />
+                → <b style={{ color: '#ccc' }}>Figma community</b> — sports packs<br />
+                → <b style={{ color: '#ccc' }}>Custom via Fiverr</b> — for branded ones
+              </div>
+            </div>
+          </div>
+        </DCArtboard>
+
+      </DCSection>
+
+    </DesignCanvas>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

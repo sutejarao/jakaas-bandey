@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JB Reward App — Design System</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   JB REWARD APP — DESIGN SYSTEM
+   Dark theme · Flat + Bold Shadows · Amber · Nunito
+   ============================================================ */
+
+:root {
+  /* ── AMBER PALETTE ── */
+  --amber-50:  #fffde7;
+  --amber-100: #fff9c4;
+  --amber-200: #fff176;
+  --amber-300: #ffd54f;
+  --amber-400: #ffca28;
+  --amber-500: #FFB300;   /* PRIMARY */
+  --amber-600: #FF8F00;   /* HOVER */
+  --amber-700: #E65100;   /* PRESSED */
+  --amber-800: #BF360C;
+  --amber-900: #7C2D00;
+
+  /* ── SLATE BLACK (BG SCALE) ── */
+  --slate-950: #0a0a0b;   /* deepest bg */
+  --slate-900: #0f0f10;   /* page base */
+  --slate-850: #141416;   /* app shell */
+  --slate-800: #1a1a1d;   /* cards / surfaces */
+  --slate-700: #222226;   /* elevated card */
+  --slate-600: #2e2e33;   /* input bg */
+  --slate-500: #3a3a40;   /* borders */
+  --slate-400: #52525a;   /* muted icons */
+  --slate-300: #71717a;   /* secondary text */
+  --slate-200: #a1a1aa;   /* placeholder */
+  --slate-100: #d4d4d8;   /* secondary text light */
+  --slate-50:  #f4f4f5;   /* primary text */
+
+  /* ── SEMANTIC TOKENS ── */
+  --color-bg:           var(--slate-900);
+  --color-surface:      var(--slate-800);
+  --color-surface-high: var(--slate-700);
+  --color-border:       var(--slate-500);
+  --color-border-subtle:var(--slate-600);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: var(--slate-200);
+  --color-text-muted:   var(--slate-300);
+  --color-accent:       var(--amber-500);
+  --color-accent-hover: var(--amber-600);
+  --color-accent-pressed:var(--amber-700);
+  --color-accent-tint:  rgba(255, 179, 0, 0.10);
+  --color-accent-glow:  var(--amber-700);
+
+  /* ── FLAT SURFACE TOKENS ── */
+  --flat-bg:           var(--slate-800);
+  --flat-bg-hover:     var(--slate-700);
+  --flat-border:       var(--slate-500);
+  --flat-border-accent:var(--amber-500);
+
+  /* ── BOLD OFFSET SHADOWS ── */
+  --shadow-sm:        3px 3px 0 var(--slate-500);
+  --shadow-md:        4px 4px 0 var(--slate-500);
+  --shadow-lg:        6px 6px 0 var(--slate-500);
+  --shadow-amber-sm:  3px 3px 0 var(--amber-600);
+  --shadow-amber-md:  4px 4px 0 var(--amber-600);
+  --shadow-amber-lg:  6px 6px 0 var(--amber-600);
+  --shadow-amber-glow:5px 5px 0 var(--amber-700);
+
+  /* ── TYPOGRAPHY ── */
+  --font-sans: 'Nunito', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --text-xs:   11px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-md:   17px;
+  --text-lg:   20px;
+  --text-xl:   24px;
+  --text-2xl:  30px;
+  --text-3xl:  38px;
+  --text-4xl:  48px;
+
+  /* ── SPACING ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── RADIUS ── */
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  20px;
+  --radius-2xl: 24px;
+  --radius-pill:999px;
+}
+
+/* ── BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── LAYOUT ── */
+.ds-page { max-width: 1100px; margin: 0 auto; padding: 48px 24px 120px; }
+.ds-section { margin-bottom: 72px; }
+.ds-section-title {
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.ds-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--amber-500), transparent);
+}
+.ds-row { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+.ds-col { display: flex; flex-direction: column; gap: var(--space-3); }
+
+/* ── FLAT CARDS (core component) ── */
+.glass {
+  background: var(--slate-800);
+  border: 2px solid var(--slate-500);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+.glass-amber {
+  background: var(--slate-800);
+  border: 2px solid var(--amber-500);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-amber-md);
+}
+.glass-heavy {
+  background: var(--slate-800);
+  border: 2px solid var(--slate-500);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── TYPOGRAPHY ── */
+.t-hero   { font-size: var(--text-4xl); font-weight: 900; line-height: 1.05; letter-spacing: -1px; }
+.t-h1     { font-size: var(--text-3xl); font-weight: 800; line-height: 1.1; }
+.t-h2     { font-size: var(--text-2xl); font-weight: 800; line-height: 1.2; }
+.t-h3     { font-size: var(--text-xl);  font-weight: 700; line-height: 1.3; }
+.t-h4     { font-size: var(--text-lg);  font-weight: 700; line-height: 1.4; }
+.t-body   { font-size: var(--text-base); font-weight: 400; line-height: 1.6; color: var(--color-text-secondary); }
+.t-strong { font-size: var(--text-base); font-weight: 700; }
+.t-small  { font-size: var(--text-sm);  font-weight: 600; color: var(--color-text-muted); }
+.t-label  { font-size: var(--text-xs);  font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--color-text-muted); }
+.t-mono   { font-family: var(--font-mono); font-size: var(--text-sm); }
+.t-accent { color: var(--color-accent); }
+.t-muted  { color: var(--color-text-muted); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: var(--text-base);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--color-accent);
+  color: #1a0a00;
+  padding: 12px 28px;
+  border: 2px solid #1a0a00;
+  box-shadow: var(--shadow-amber-md);
+}
+.btn-primary:hover {
+  background: var(--color-accent-hover);
+  box-shadow: var(--shadow-amber-lg);
+  transform: translate(-1px, -1px);
+}
+.btn-primary:active {
+  background: var(--color-accent-pressed);
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+.btn-secondary {
+  background: var(--slate-800);
+  color: var(--color-accent);
+  padding: 11px 28px;
+  border: 2px solid var(--color-accent);
+  box-shadow: var(--shadow-amber-md);
+}
+.btn-secondary:hover {
+  background: var(--color-accent-tint);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-amber-lg);
+}
+.btn-ghost {
+  background: var(--slate-800);
+  color: var(--color-text-secondary);
+  padding: 11px 24px;
+  border: 2px solid var(--slate-500);
+  box-shadow: var(--shadow-md);
+}
+.btn-ghost:hover {
+  background: var(--slate-700);
+  color: var(--color-text-primary);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-lg);
+}
+.btn-sm { padding: 8px 18px; font-size: var(--text-sm); }
+.btn-lg { padding: 16px 36px; font-size: var(--text-md); }
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* ── INPUTS ── */
+.input-wrap { display: flex; flex-direction: column; gap: var(--space-2); }
+.input-label { font-size: var(--text-xs); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--color-text-muted); }
+.input {
+  background: var(--slate-900);
+  border: 2px solid var(--slate-500);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 600;
+  padding: 12px 16px;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  outline: none;
+}
+.input::placeholder { color: var(--slate-400); font-weight: 400; }
+.input:focus {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-amber-md);
+  transform: translate(-1px, -1px);
+}
+.textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+/* ── COIN SELECTOR ── */
+.coin-selector { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.coin {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: var(--text-base);
+  border: 2px solid var(--slate-500);
+  background: var(--slate-800);
+  color: var(--slate-300);
+  cursor: pointer;
+  transition: all 0.12s;
+  box-shadow: 2px 2px 0 var(--slate-600);
+}
+.coin:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--amber-700);
+}
+.coin.active {
+  background: var(--color-accent);
+  border-color: #1a0a00;
+  color: #1a0a00;
+  box-shadow: var(--shadow-amber-md);
+  transform: translate(-2px, -2px);
+}
+.coin.filled {
+  background: rgba(255,179,0,0.12);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  box-shadow: 2px 2px 0 var(--amber-700);
+}
+
+/* ── LEADERBOARD ROW ── */
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  transition: all 0.12s;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.lb-row:hover {
+  background: var(--slate-700);
+  border-color: var(--slate-500);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-md);
+}
+.lb-row.you {
+  background: var(--color-accent-tint);
+  border: 2px solid var(--color-accent);
+  box-shadow: var(--shadow-amber-md);
+}
+.lb-rank {
+  width: 28px;
+  font-size: var(--text-md);
+  font-weight: 900;
+  text-align: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+.lb-rank.gold { color: #FFD700; }
+.lb-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--slate-700);
+  border: 2px solid var(--slate-500);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-md);
+  font-weight: 800;
+  color: var(--color-accent);
+}
+.lb-name { flex: 1; font-weight: 700; font-size: var(--text-base); }
+.lb-coins {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 900;
+  font-size: var(--text-md);
+}
+.coin-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-accent-tint);
+  border: 1.5px solid rgba(255,179,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* ── NOMINATION CARD ── */
+.nom-card {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--slate-800);
+  border: 2px solid var(--slate-500);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: all 0.12s;
+}
+.nom-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-amber-md);
+  transform: translate(-2px, -2px);
+}
+.nom-category {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  background: var(--color-accent-tint);
+  color: var(--color-accent);
+  border: 1px solid rgba(255,179,0,0.2);
+}
+.nom-note { font-size: var(--text-sm); color: var(--color-text-secondary); font-style: italic; line-height: 1.5; }
+.nom-meta { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 700; }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.badge-mvp     { background: var(--color-accent); color: #1a0a00; box-shadow: var(--shadow-amber-sm); }
+.badge-active  { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+.badge-pending { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.25); }
+.badge-guest   { background: var(--slate-800); color: var(--slate-300); border: 2px solid var(--slate-500); }
+
+/* ── AVATAR GROUP ── */
+.avatar-group { display: flex; }
+.avatar-group .lb-avatar { margin-left: -10px; border: 2px solid var(--slate-900); }
+.avatar-group .lb-avatar:first-child { margin-left: 0; }
+
+/* ── NAV BAR ── */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: var(--space-3) var(--space-4);
+  background: var(--slate-900);
+  border-top: 2px solid var(--slate-500);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--slate-400);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  transition: color 0.15s;
+}
+.nav-item.active { color: var(--color-accent); }
+.nav-icon { font-size: 20px; }
+
+/* ── CATEGORY PILL (selectable) ── */
+.cat-pill {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--slate-500);
+  background: var(--slate-800);
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--slate-600);
+  transition: all 0.12s;
+  white-space: nowrap;
+}
+.cat-pill:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--amber-700);
+}
+.cat-pill.selected {
+  background: var(--color-accent);
+  color: #1a0a00;
+  border-color: #1a0a00;
+  box-shadow: var(--shadow-amber-md);
+  transform: translate(-2px, -2px);
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--slate-500), transparent);
+  margin: var(--space-4) 0;
+}
+
+/* ── TOKEN CHIP ── */
+.token-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px;
+  background: var(--slate-800);
+  border: 1px solid var(--slate-600);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--slate-100);
+}
+.token-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: var(--slate-950);
+  border: 1px solid var(--slate-700);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: #a3e635;
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ── DEMO PHONE SHELL ── */
+.phone {
+  width: 280px;
+  border-radius: 36px;
+  background: var(--slate-950);
+  border: 2px solid var(--slate-700);
+  box-shadow: var(--shadow-lg), var(--shadow-amber-glow);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.phone-top {
+  background: var(--slate-900);
+  padding: 14px 20px 10px;
+  border-bottom: 2px solid var(--slate-500);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.phone-content { padding: 0; display: flex; flex-direction: column; }
+.phone-nav { border-top: 2px solid var(--slate-500); }
+
+/* ── HEADER / BRAND ── */
+.ds-header {
+  padding: 48px 0 56px;
+  border-bottom: 2px solid var(--slate-500);
+  margin-bottom: 64px;
+}
+.brand-wordmark {
+  font-size: var(--text-4xl);
+  font-weight: 900;
+  color: var(--color-text-primary);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.brand-wordmark span { color: var(--color-accent); }
+.ds-tag {
+  display: inline-flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+}
+.ds-tag-pill {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--amber-500);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--color-accent);
+  background: var(--color-accent-tint);
+}
+
+/* ── ILLUSTRATION BRIEF STYLES ── */
+.illus-brief {
+  background: var(--slate-800);
+  border: 2px solid var(--slate-500);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  
+}
+.illus-example {
+  background: var(--slate-800);
+  border: 2px dashed var(--slate-600);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--slate-400);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-align: center;
+  padding: var(--space-6);
+  font-style: italic;
+}
+
+/* Ambient glow behind cards */
+.glow-bg {
+  position: relative;
+}
+.glow-bg::before {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(255,179,0,0.06), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-bg > * { position: relative; z-index: 1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--slate-900); }
+::-webkit-scrollbar-thumb { background: var(--slate-600); border-radius: 99px; }
+</style>
+</head>
+<body>
+<div class="ds-page">
+
+  <!-- ── HEADER ── -->
+  <div class="ds-header">
+    <div class="brand-wordmark">JB <span>Rewards</span></div>
+    <p class="t-body" style="margin-top:12px;max-width:560px;font-size:17px;">
+      Design system for the Jakass Bandey cricket team reward app.
+      Dark theme · Flat + Bold Shadows · Amber accents · Nunito typeface.
+    </p>
+    <div class="ds-tag">
+      <span class="ds-tag-pill">Dark Theme</span>
+      <span class="ds-tag-pill">Flat + Bold Shadows</span>
+      <span class="ds-tag-pill">Amber #FFB300</span>
+      <span class="ds-tag-pill">Nunito</span>
+      <span class="ds-tag-pill">Hand-drawn Illustrations</span>
+    <span class="ds-tag-pill">JB Coin · EST. 2026</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       01 · COLOR TOKENS
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="colors">
+    <div class="ds-section-title">01 · Color Tokens</div>
+
+    <!-- Amber scale -->
+    <p class="t-label" style="margin-bottom:12px;">Amber Scale — Primary Brand Color</p>
+    <div style="display:flex;gap:0;border-radius:12px;overflow:hidden;border:1px solid var(--slate-500);margin-bottom:32px;">
+      <div style="flex:0.6;background:#fffde7;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#333;">50<br>#fffde7</div>
+      <div style="flex:0.7;background:#fff9c4;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#333;">100</div>
+      <div style="flex:0.8;background:#fff176;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#444;">200</div>
+      <div style="flex:0.9;background:#ffd54f;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#444;">300</div>
+      <div style="flex:1;background:#ffca28;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#444;">400</div>
+      <div style="flex:1.5;background:#FFB300;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:11px;font-weight:800;color:#fff;position:relative;">
+        500 — PRIMARY<br>#FFB300
+        <div style="position:absolute;top:8px;right:8px;background:#fff;color:#FFB300;font-size:9px;font-weight:900;padding:2px 6px;border-radius:99px;letter-spacing:1px;">MAIN</div>
+      </div>
+      <div style="flex:1;background:#FF8F00;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#fff;">600<br>Hover</div>
+      <div style="flex:0.9;background:#E65100;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#fff;">700<br>Pressed</div>
+      <div style="flex:0.8;background:#BF360C;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#fff;">800</div>
+      <div style="flex:0.7;background:#7C2D00;height:80px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#fff;">900</div>
+    </div>
+
+    <!-- Slate scale -->
+    <p class="t-label" style="margin-bottom:12px;">Slate Black Scale — Backgrounds & Surfaces</p>
+    <div style="display:flex;gap:0;border-radius:12px;overflow:hidden;border:1px solid var(--slate-500);margin-bottom:32px;">
+      <div style="flex:1;background:#0a0a0b;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#444;">950<br>Base</div>
+      <div style="flex:1;background:#0f0f10;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#555;">900<br>Page</div>
+      <div style="flex:1;background:#141416;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#555;">850</div>
+      <div style="flex:1;background:#1a1a1d;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#666;">800<br>Card</div>
+      <div style="flex:1;background:#222226;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#777;">700</div>
+      <div style="flex:1;background:#2e2e33;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#888;">600<br>Input</div>
+      <div style="flex:1;background:#3a3a40;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#aaa;">500<br>Border</div>
+      <div style="flex:1;background:#52525a;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#bbb;">400</div>
+      <div style="flex:1;background:#71717a;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#ddd;">300</div>
+      <div style="flex:1;background:#a1a1aa;height:64px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;font-size:10px;font-weight:700;color:#fff;">200</div>
+    </div>
+
+    <!-- Semantic tokens -->
+    <p class="t-label" style="margin-bottom:12px;">Semantic Tokens</p>
+    <div class="ds-row">
+      <div style="flex:1;min-width:200px;" class="glass" style="padding:20px;">
+        <div style="padding:20px;" class="glass">
+          <p class="t-label" style="margin-bottom:12px;">Backgrounds</p>
+          <div class="ds-col">
+            <div class="token-chip"><div class="token-swatch" style="background:#0f0f10;"></div>--color-bg · #0f0f10</div>
+            <div class="token-chip"><div class="token-swatch" style="background:#1a1a1d;"></div>--color-surface · #1a1a1d</div>
+            <div class="token-chip"><div class="token-swatch" style="background:#222226;"></div>--color-surface-high · #222226</div>
+            <div class="token-chip"><div class="token-swatch" style="background:#3a3a40;"></div>--color-border · #3a3a40</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="padding:20px;" class="glass">
+          <p class="t-label" style="margin-bottom:12px;">Accent</p>
+          <div class="ds-col">
+            <div class="token-chip"><div class="token-swatch" style="background:#FFB300;"></div>--color-accent · #FFB300</div>
+            <div class="token-chip"><div class="token-swatch" style="background:#FF8F00;"></div>--color-accent-hover · #FF8F00</div>
+            <div class="token-chip"><div class="token-swatch" style="background:#E65100;"></div>--color-accent-pressed · #E65100</div>
+            <div class="token-chip"><div class="token-swatch" style="background:rgba(255,179,0,0.12);border:1px solid rgba(255,179,0,0.3);"></div>--color-accent-tint</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="padding:20px;" class="glass">
+          <p class="t-label" style="margin-bottom:12px;">Shadow Tokens</p>
+          <div class="ds-col">
+            <div class="token-chip"><div class="token-swatch" style="background:var(--slate-500);"></div>--shadow-sm · 3px 3px 0 slate-500</div>
+            <div class="token-chip"><div class="token-swatch" style="background:var(--slate-500);"></div>--shadow-md · 4px 4px 0 slate-500</div>
+            <div class="token-chip"><div class="token-swatch" style="background:var(--amber-600);"></div>--shadow-amber-sm · 3px 3px 0 amber-600</div>
+            <div class="token-chip"><div class="token-swatch" style="background:var(--amber-600);"></div>--shadow-amber-md · 4px 4px 0 amber-600</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shadow tokens -->
+    <p class="t-label" style="margin-top:28px;margin-bottom:12px;">Shadow Tokens — Bold Offset</p>
+    <div class="ds-row">
+      <div class="glass" style="padding:20px;flex:1;min-width:140px;text-align:center;box-shadow:3px 3px 0 var(--slate-500);">
+        <div class="t-label" style="margin-bottom:8px;">shadow-sm</div>
+        <div class="t-mono" style="font-size:10px;color:var(--slate-400);">3px 3px 0 var(--slate-500)</div>
+      </div>
+      <div class="glass" style="padding:20px;flex:1;min-width:140px;text-align:center;box-shadow:4px 4px 0 var(--slate-500);">
+        <div class="t-label" style="margin-bottom:8px;">shadow-md</div>
+        <div class="t-mono" style="font-size:10px;color:var(--slate-400);">4px 4px 0 var(--slate-500)</div>
+      </div>
+      <div class="glass" style="padding:20px;flex:1;min-width:140px;text-align:center;box-shadow:3px 3px 0 var(--amber-600);border-color:var(--amber-500);">
+        <div class="t-label" style="margin-bottom:8px;">amber-sm</div>
+        <div class="t-mono" style="font-size:10px;color:var(--slate-400);">3px 3px 0 var(--amber-600)</div>
+      </div>
+      <div class="glass" style="padding:20px;flex:1;min-width:140px;text-align:center;box-shadow:4px 4px 0 var(--amber-600);border-color:var(--amber-500);">
+        <div class="t-label" style="margin-bottom:8px;">amber-md</div>
+        <div class="t-mono" style="font-size:10px;color:var(--slate-400);">4px 4px 0 var(--amber-600)</div>
+      </div>
+      <div class="glass" style="padding:20px;flex:1;min-width:140px;text-align:center;box-shadow:6px 6px 0 var(--amber-600);border-color:var(--amber-500);">
+        <div class="t-label" style="margin-bottom:8px;">amber-lg</div>
+        <div class="t-mono" style="font-size:10px;color:var(--slate-400);">6px 6px 0 var(--amber-600)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       02 · TYPOGRAPHY
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="typography">
+    <div class="ds-section-title">02 · Typography — Nunito</div>
+
+    <div class="ds-row" style="margin-bottom:28px;">
+      <div class="glass" style="padding:24px;flex:2;min-width:300px;">
+        <div class="t-label" style="margin-bottom:16px;">Type Scale</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">48px / 900</span>
+            <span class="t-hero">Hero</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">38px / 800</span>
+            <span class="t-h1">Heading 1</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">30px / 800</span>
+            <span class="t-h2">Heading 2</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">24px / 700</span>
+            <span class="t-h3">Heading 3</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">20px / 700</span>
+            <span class="t-h4">Heading 4</span>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">15px / 400</span>
+            <span class="t-body">Body — Dev nominated Rajan for Best Catch · 4 coins</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">15px / 700</span>
+            <span class="t-strong">Strong — Month ends in 8 days</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">13px / 600</span>
+            <span class="t-small">Small — from Tariq · 2 hours ago</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:16px;">
+            <span style="width:80px;font-size:10px;color:var(--slate-400);font-family:var(--font-mono);flex-shrink:0;">11px / 800</span>
+            <span class="t-label" style="color:var(--color-accent);">Label — NOMINATIONS · MAY 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass" style="padding:24px;flex:1;min-width:240px;display:flex;flex-direction:column;gap:16px;">
+        <div class="t-label">Character Set</div>
+        <div style="font-size:48px;font-weight:900;line-height:1;color:var(--color-accent);letter-spacing:-2px;">Aa</div>
+        <div style="font-size:20px;font-weight:700;color:var(--slate-200);letter-spacing:2px;">ABCDEFGHIJKLM</div>
+        <div style="font-size:20px;font-weight:700;color:var(--slate-200);letter-spacing:2px;">NOPQRSTUVWXYZ</div>
+        <div style="font-size:20px;font-weight:400;color:var(--slate-300);">abcdefghijklmnopqrstuvwxyz</div>
+        <div style="font-size:20px;font-weight:700;color:var(--slate-100);">0 1 2 3 4 5 6 7 8 9</div>
+        <div class="divider"></div>
+        <div class="t-label">Google Fonts Import</div>
+        <div class="code-block" style="font-size:10px;">@import url('https://fonts.googleapis.com
+  /css2?family=Nunito:wght@
+  400;600;700;800;900
+  &display=swap');</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       03 · SHADOW SYSTEM
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="glass">
+    <div class="ds-section-title">03 · Shadow System — Flat + Bold</div>
+
+    <div class="ds-row" style="margin-bottom:24px;">
+
+      <div style="flex:1;min-width:200px;padding:24px;" class="glass">
+        <div class="t-label" style="margin-bottom:8px;">.flat (default)</div>
+        <div class="t-body" style="font-size:13px;">background: slate-800<br>border: 2px solid slate-500<br>box-shadow: 4px 4px 0 slate-500</div>
+        <div style="margin-top:12px;padding:12px;background:var(--slate-800);border:2px solid var(--slate-500);border-radius:8px;box-shadow:4px 4px 0 var(--slate-500);font-size:13px;font-weight:700;">Leaderboard card</div>
+      </div>
+
+      <div style="flex:1;min-width:200px;padding:24px;" class="glass-amber">
+        <div class="t-label" style="margin-bottom:8px;">.flat-amber (accent)</div>
+        <div class="t-body" style="font-size:13px;">border: 2px solid amber-500<br>box-shadow: 4px 4px 0 amber-600<br>Use for: highlighted rows, CTAs</div>
+        <div style="margin-top:12px;padding:12px;background:var(--color-accent-tint);border:2px solid var(--color-accent);border-radius:8px;box-shadow:4px 4px 0 var(--amber-700);font-size:13px;font-weight:700;color:var(--color-accent);">Your row (You)</div>
+      </div>
+
+      <div style="flex:1;min-width:200px;padding:24px;" class="glass-heavy">
+        <div class="t-label" style="margin-bottom:8px;">.flat-heavy (modal)</div>
+        <div class="t-body" style="font-size:13px;">background: slate-800<br>border: 2px solid slate-500<br>box-shadow: 6px 6px 0 slate-500</div>
+        <div style="margin-top:12px;padding:12px;background:var(--slate-800);border:2px solid var(--slate-500);border-radius:8px;box-shadow:6px 6px 0 var(--slate-500);font-size:13px;font-weight:700;">Nomination sheet</div>
+      </div>
+
+    </div>
+
+    <div class="code-block">/* Flat + Bold Shadow utility classes — copy into your CSS */
+
+.flat {
+  background: var(--slate-800);          /* #1a1a1d */
+  border: 2px solid var(--slate-500);    /* #3a3a40 */
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--slate-500);
+}
+
+.flat-amber {     /* amber border + offset shadow — highlighted/interactive */
+  background: var(--slate-800);
+  border: 2px solid var(--amber-500);    /* #FFB300 */
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 var(--amber-600); /* #FF8F00 */
+}
+
+.flat-heavy {     /* larger shadow — modals, sheets, overlays */
+  background: var(--slate-800);
+  border: 2px solid var(--slate-500);
+  border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--slate-500);
+}
+
+/* Hover pattern — lift + bigger shadow */
+.flat:hover, .flat-amber:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--slate-500); /* or amber-600 for accented */
+}</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       04 · COMPONENTS
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="components">
+    <div class="ds-section-title">04 · Components</div>
+
+    <!-- Buttons -->
+    <p class="t-label" style="margin-bottom:16px;">Buttons</p>
+    <div class="glass" style="padding:28px;margin-bottom:24px;">
+      <div class="ds-row" style="align-items:center;flex-wrap:wrap;gap:12px;">
+        <button class="btn btn-primary">+ Nominate</button>
+        <button class="btn btn-primary btn-lg">+ Nominate someone 🪙</button>
+        <button class="btn btn-primary btn-sm">Submit</button>
+        <button class="btn btn-secondary">View Profile</button>
+        <button class="btn btn-ghost">Cancel</button>
+        <button class="btn btn-primary btn-icon">🏅</button>
+        <button class="btn btn-ghost btn-icon">✕</button>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <p class="t-label" style="margin-bottom:16px;">Form Inputs</p>
+    <div class="glass" style="padding:28px;margin-bottom:24px;">
+      <div class="ds-row">
+        <div class="input-wrap" style="flex:1;min-width:200px;">
+          <label class="input-label">Your name</label>
+          <input class="input" type="text" placeholder="e.g. Dev Patel" />
+        </div>
+        <div class="input-wrap" style="flex:1;min-width:200px;">
+          <label class="input-label">Email</label>
+          <input class="input" type="email" placeholder="dev@example.com" />
+        </div>
+        <div class="input-wrap" style="flex:2;min-width:280px;">
+          <label class="input-label">Nomination note (optional)</label>
+          <textarea class="input textarea" placeholder="Tell the team why this person deserves coins..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coin Selector -->
+    <p class="t-label" style="margin-bottom:16px;">Coin Selector</p>
+    <div class="glass-amber" style="padding:28px;margin-bottom:24px;">
+      <p class="t-label" style="margin-bottom:14px;">How many coins? (tap to select)</p>
+      <div class="coin-selector">
+        <div class="coin filled">1</div>
+        <div class="coin filled">2</div>
+        <div class="coin filled">3</div>
+        <div class="coin filled">4</div>
+        <div class="coin active">5</div>
+        <div class="coin">6</div>
+        <div class="coin">7</div>
+        <div class="coin">8</div>
+        <div class="coin">9</div>
+        <div class="coin">10</div>
+      </div>
+      <p class="t-small" style="margin-top:12px;font-style:italic;">5 coins selected · coins 1–4 filled, 5 is active, 6–10 available</p>
+    </div>
+
+    <!-- Category Pills -->
+    <p class="t-label" style="margin-bottom:16px;">Category Pills</p>
+    <div class="glass" style="padding:28px;margin-bottom:24px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div class="cat-pill selected">🏅 Best catch</div>
+        <div class="cat-pill">⭐ Top scorer</div>
+        <div class="cat-pill">😂 Best banter</div>
+        <div class="cat-pill">💪 Most effort</div>
+        <div class="cat-pill">🎯 Match winner</div>
+        <div class="cat-pill">🤝 Team player</div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Rows -->
+    <p class="t-label" style="margin-bottom:16px;">Leaderboard Rows</p>
+    <div class="glass" style="padding:20px;margin-bottom:24px;display:flex;flex-direction:column;gap:4px;">
+      <div class="lb-row">
+        <div class="lb-rank gold">🥇</div>
+        <div class="lb-avatar">D</div>
+        <div class="lb-name">Dev Patel</div>
+        <span class="badge badge-active">Active</span>
+        <div class="lb-coins"><div class="coin-badge">🪙</div><span class="t-accent">47</span></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank">2</div>
+        <div class="lb-avatar">R</div>
+        <div class="lb-name">Rajan Singh</div>
+        <span class="badge badge-active">Active</span>
+        <div class="lb-coins"><div class="coin-badge">🪙</div>38</div>
+      </div>
+      <div class="lb-row you">
+        <div class="lb-rank" style="color:var(--color-accent);">3</div>
+        <div class="lb-avatar" style="border-color:var(--amber-500);">T</div>
+        <div class="lb-name" style="color:var(--color-accent);">You (Tariq)</div>
+        <span class="badge badge-mvp">You</span>
+        <div class="lb-coins" style="color:var(--color-accent);"><div class="coin-badge">🪙</div>31</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank">4</div>
+        <div class="lb-avatar">O</div>
+        <div class="lb-name">Omar Khan</div>
+        <span class="badge badge-pending">Pending</span>
+        <div class="lb-coins"><div class="coin-badge">🪙</div>—</div>
+      </div>
+    </div>
+
+    <!-- Nomination Card -->
+    <p class="t-label" style="margin-bottom:16px;">Nomination Card</p>
+    <div class="ds-row" style="margin-bottom:24px;">
+      <div class="nom-card" style="flex:1;min-width:260px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="lb-avatar" style="width:36px;height:36px;font-size:14px;">R</div>
+          <div>
+            <div class="t-strong">Rajan Singh</div>
+            <div class="nom-meta">nominated by Dev Patel · 2h ago</div>
+          </div>
+          <div class="lb-coins" style="margin-left:auto;color:var(--color-accent);">
+            <div class="coin-badge">🪙</div>+8
+          </div>
+        </div>
+        <div class="nom-category">🏅 Best catch</div>
+        <div class="nom-note">"That diving catch at mid-on in the last over was absolute 🔥"</div>
+      </div>
+      <div class="nom-card" style="flex:1;min-width:260px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="lb-avatar" style="width:36px;height:36px;font-size:14px;">T</div>
+          <div>
+            <div class="t-strong">Tariq Mahmood</div>
+            <div class="nom-meta">nominated by Omar Khan · 5h ago</div>
+          </div>
+          <div class="lb-coins" style="margin-left:auto;color:var(--color-accent);">
+            <div class="coin-badge">🪙</div>+5
+          </div>
+        </div>
+        <div class="nom-category">😂 Best banter</div>
+        <div class="nom-note">"Kept everyone's spirits up even when we were 40 runs down"</div>
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <p class="t-label" style="margin-bottom:16px;">Badges & Status</p>
+    <div class="glass" style="padding:24px;margin-bottom:24px;">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <span class="badge badge-mvp">MVP</span>
+        <span class="badge badge-active">✓ Active</span>
+        <span class="badge badge-pending">⏳ Pending</span>
+        <span class="badge badge-guest">Guest</span>
+        <span class="badge" style="background:var(--color-accent-tint);color:var(--color-accent);border:1px solid var(--amber-500);">🥇 #1 This Month</span>
+        <span class="badge" style="background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.2);">🔒 Locked</span>
+      </div>
+    </div>
+
+    <!-- Nav Bar -->
+    <p class="t-label" style="margin-bottom:16px;">Bottom Navigation</p>
+    <div style="max-width:380px;border-radius:20px;overflow:hidden;border:1px solid var(--slate-500);margin-bottom:24px;">
+      <div class="nav">
+        <div class="nav-item active"><span class="nav-icon">🏠</span>Home</div>
+        <div class="nav-item"><span class="nav-icon">🏅</span>Nominate</div>
+        <div class="nav-item"><span class="nav-icon">👤</span>Profile</div>
+        <div class="nav-item"><span class="nav-icon">⚙️</span>Admin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       05 · SPACING & RADIUS
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="spacing">
+    <div class="ds-section-title">05 · Spacing & Radius</div>
+    <div class="ds-row">
+      <div class="glass" style="padding:24px;flex:1;min-width:280px;">
+        <div class="t-label" style="margin-bottom:16px;">Spacing Scale</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          {['1 · 4px','2 · 8px','3 · 12px','4 · 16px','5 · 20px','6 · 24px','8 · 32px','10 · 40px','12 · 48px'].map((s,i) => '')}
+          <div style="display:flex;align-items:center;gap:12px;"><div style="width:4px;height:14px;background:var(--color-accent);border-radius:2px;"></div><span class="t-mono" style="font-size:12px;">space-1 · 4px</span></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="width:8px;height:14px;background:var(--color-accent);border-radius:2px;"></div><span class="t-mono" style="font-size:12px;">space-2 · 8px</span></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="width:12px;height:14px;background:var(--color-accent);border-radius:2px;"></div><span class="t-mono" style="font-size:12px;">space-3 · 12px</span></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="width:16px;height:14px;background:var(--color-accent);border-radius:2px;"></div><span class="t-mono" style="font-size:12px;">space-4 · 16px</span></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="width:24px;height:14px;background:var(--color-accent);border-radius:2px;"></div><span class="t-mono" style="font-size:12px;">space-6 · 24px</span></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="width:32px;height:14px;background:var(--color-accent);border-radius:2px;"></div><span class="t-mono" style="font-size:12px;">space-8 · 32px</span></div>
+          <div style="display:flex;align-items:center;gap:12px;"><div style="width:48px;height:14px;background:var(--color-accent);border-radius:2px;"></div><span class="t-mono" style="font-size:12px;">space-12 · 48px</span></div>
+        </div>
+      </div>
+      <div class="glass" style="padding:24px;flex:1;min-width:280px;">
+        <div class="t-label" style="margin-bottom:16px;">Border Radius Scale</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:48px;height:32px;background:var(--color-accent-tint);border:1.5px solid var(--amber-500);border-radius:8px;flex-shrink:0;"></div>
+            <span class="t-mono" style="font-size:12px;">radius-sm · 8px — inputs, chips</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:48px;height:32px;background:var(--color-accent-tint);border:1.5px solid var(--amber-500);border-radius:12px;flex-shrink:0;"></div>
+            <span class="t-mono" style="font-size:12px;">radius-md · 12px — cards</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:48px;height:32px;background:var(--color-accent-tint);border:1.5px solid var(--amber-500);border-radius:16px;flex-shrink:0;"></div>
+            <span class="t-mono" style="font-size:12px;">radius-lg · 16px — panels, flat cards</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:48px;height:32px;background:var(--color-accent-tint);border:1.5px solid var(--amber-500);border-radius:20px;flex-shrink:0;"></div>
+            <span class="t-mono" style="font-size:12px;">radius-xl · 20px — sheets, modals</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div style="width:48px;height:32px;background:var(--color-accent-tint);border:1.5px solid var(--amber-500);border-radius:999px;flex-shrink:0;"></div>
+            <span class="t-mono" style="font-size:12px;">radius-pill · 999px — buttons, badges</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       06 · ILLUSTRATION BRIEF
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="illustrations">
+    <div class="ds-section-title">06 · Illustration Brief — Hand-Drawn Style</div>
+
+    <div class="ds-row" style="margin-bottom:28px;">
+      <div class="illus-brief" style="flex:1;min-width:280px;">
+        <div class="t-label" style="margin-bottom:12px;">Style Direction</div>
+        <p class="t-body" style="line-height:1.8;font-size:14px;">
+          <strong style="color:#fff;">Hand-drawn / sketchy</strong> — think Mailchimp's "Freddie" era or Basecamp's illustration style.
+          Rough, imperfect, warm strokes. Slight line variation, textured hatching.
+          Characters should be <strong style="color:#fff;">abstract and inclusive</strong> — no photorealistic faces.
+        </p>
+        <div class="divider"></div>
+        <div class="t-label" style="margin-bottom:12px;">Colour Palette for Illustrations</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:#FFB300;border:1px solid rgba(255,255,255,0.1);"></div>
+            <span style="font-size:10px;color:var(--slate-400);font-family:var(--font-mono);">#FFB300</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:#FFD54F;border:1px solid rgba(255,255,255,0.1);"></div>
+            <span style="font-size:10px;color:var(--slate-400);font-family:var(--font-mono);">#FFD54F</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:#ffffff;border:1px solid rgba(255,255,255,0.1);"></div>
+            <span style="font-size:10px;color:var(--slate-400);font-family:var(--font-mono);">#FFFFFF</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:#1a1a1d;border:1px solid rgba(255,255,255,0.1);"></div>
+            <span style="font-size:10px;color:var(--slate-400);font-family:var(--font-mono);">#1A1A1D</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:#52525a;border:1px solid rgba(255,255,255,0.1);"></div>
+            <span style="font-size:10px;color:var(--slate-400);font-family:var(--font-mono);">#52525A</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:40px;height:40px;border-radius:8px;background:#E65100;border:1px solid rgba(255,255,255,0.1);"></div>
+            <span style="font-size:10px;color:var(--slate-400);font-family:var(--font-mono);">#E65100</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="t-label" style="margin-bottom:8px;">Stroke Style</div>
+        <div style="font-size:13px;color:var(--slate-200);line-height:1.8;">
+          Stroke weight: <strong style="color:#fff;">2–3px</strong>, slightly variable<br>
+          Fills: flat colour + optional hatching at 45°<br>
+          No drop shadows — use the dark bg for depth<br>
+          Line ends: slightly rounded caps<br>
+          Imperfections welcome — not vector-perfect
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:12px;">
+        <div class="t-label">Illustration Slots (MVP — 7 required)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/pasted-1777132452993-0.png" style="height:100%;object-fit:contain;" alt="Welcome illustration" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-welcome.png</div>
+          </div>
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/illus-empty-leaderboard.png" style="height:100%;object-fit:contain;" alt="Empty leaderboard illustration" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-empty-leaderboard.png</div>
+          </div>
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/illus-nomination-sent.png" style="height:100%;object-fit:contain;" alt="Nomination sent illustration" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-nomination-sent.png</div>
+          </div>
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/illus-empty-feed.png" style="height:100%;object-fit:contain;" alt="Empty feed illustration" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-empty-feed.png</div>
+          </div>
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/illus-coin-selector.png" style="height:100%;object-fit:contain;" alt="Coin selector illustration" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-coin-selector.png</div>
+          </div>
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/illus-locked.png" style="height:100%;object-fit:contain;" alt="Locked illustration" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-locked.png</div>
+          </div>
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/illus-trophy.png" style="height:100%;object-fit:contain;" alt="Trophy illustration" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-trophy.png</div>
+          </div>
+        </div>
+          <div style="height:100px;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);position:relative;background:#0f0f10;display:flex;align-items:center;justify-content:center;">
+            <img src="uploads/ illus-avatar-default.png" style="height:100%;object-fit:contain;" alt="Avatar default" />
+            <div style="position:absolute;bottom:4px;right:6px;background:var(--amber-500);color:#1a0a00;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;font-family:var(--font-mono);">✓ illus-avatar-default.png</div>
+          </div>
+        <div style="font-size:12px;color:var(--slate-300);line-height:1.8;">
+          Export as <strong style="color:#fff;">SVG</strong> (scalable, small, dark-bg transparent)<br>
+          Lottie JSON for celebration animations<br>
+          PNG 2× fallback for older browsers<br>
+          Sources: <strong style="color:#fff;">undraw.co · storyset.com · Fiverr</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       07 · LIVE COMPONENT PREVIEW
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="preview">
+    <div class="ds-section-title">07 · Live Screen Preview</div>
+
+    <div class="ds-row" style="align-items:flex-start;gap:24px;">
+
+      <!-- Leaderboard screen -->
+      <div class="phone">
+        <div class="phone-top">
+          <span style="font-weight:900;font-size:16px;color:#fff;">🏏 JB Rewards</span>
+          <span style="font-size:12px;color:var(--slate-400);font-weight:700;">May 2026</span>
+        </div>
+        <div class="phone-content" style="padding:12px;gap:6px;background:var(--slate-900);">
+          <!-- Countdown banner -->
+          <div class="glass-amber" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;font-weight:700;color:var(--color-accent);">⏳ Resets in 8 days</span>
+            <span style="font-size:12px;color:var(--slate-300);font-weight:700;">31 nominations</span>
+          </div>
+          <!-- Leaderboard -->
+          <div class="glass" style="padding:8px;display:flex;flex-direction:column;gap:2px;">
+            <div class="lb-row">
+              <div class="lb-rank gold" style="font-size:16px;">🥇</div>
+              <div class="lb-avatar" style="width:34px;height:34px;font-size:13px;">D</div>
+              <div class="lb-name" style="font-size:14px;">Dev Patel</div>
+              <div class="lb-coins" style="font-size:14px;color:var(--color-accent);"><div class="coin-badge" style="width:22px;height:22px;font-size:11px;">🪙</div>47</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank" style="font-size:14px;">2</div>
+              <div class="lb-avatar" style="width:34px;height:34px;font-size:13px;">R</div>
+              <div class="lb-name" style="font-size:14px;">Rajan S.</div>
+              <div class="lb-coins" style="font-size:14px;"><div class="coin-badge" style="width:22px;height:22px;font-size:11px;">🪙</div>38</div>
+            </div>
+            <div class="lb-row you">
+              <div class="lb-rank" style="font-size:14px;color:var(--color-accent);">3</div>
+              <div class="lb-avatar" style="width:34px;height:34px;font-size:13px;border-color:var(--color-accent);">T</div>
+              <div class="lb-name" style="font-size:14px;color:var(--color-accent);">You</div>
+              <div class="lb-coins" style="font-size:14px;color:var(--color-accent);"><div class="coin-badge" style="width:22px;height:22px;font-size:11px;">🪙</div>31</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-rank" style="font-size:14px;">4</div>
+              <div class="lb-avatar" style="width:34px;height:34px;font-size:13px;">O</div>
+              <div class="lb-name" style="font-size:14px;">Omar K.</div>
+              <div class="lb-coins" style="font-size:14px;"><div class="coin-badge" style="width:22px;height:22px;font-size:11px;">🪙</div>24</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;margin-top:4px;padding:12px;">+ Nominate someone</button>
+        </div>
+        <div class="phone-nav">
+          <div class="nav" style="padding:10px 4px 14px;">
+            <div class="nav-item active" style="padding:6px 12px;"><span class="nav-icon" style="font-size:18px;">🏠</span>Home</div>
+            <div class="nav-item" style="padding:6px 12px;"><span class="nav-icon" style="font-size:18px;">🏅</span>Nominate</div>
+            <div class="nav-item" style="padding:6px 12px;"><span class="nav-icon" style="font-size:18px;">👤</span>Profile</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nominate screen -->
+      <div class="phone">
+        <div class="phone-top">
+          <span style="font-weight:700;font-size:14px;color:var(--slate-300);">← Back</span>
+          <span style="font-weight:900;font-size:16px;color:#fff;">Nominate</span>
+          <span style="width:40px;"></span>
+        </div>
+        <div class="phone-content" style="padding:14px;gap:14px;background:var(--slate-900);">
+          <div class="input-wrap">
+            <label class="input-label">Teammate</label>
+            <div class="glass-amber" style="padding:12px 16px;display:flex;align-items:center;gap:10px;border-radius:12px;">
+              <div class="lb-avatar" style="width:32px;height:32px;font-size:12px;">R</div>
+              <span style="font-weight:700;font-size:15px;">Rajan Singh</span>
+              <span style="margin-left:auto;font-size:12px;color:var(--slate-400);">Change ›</span>
+            </div>
+          </div>
+          <div class="input-wrap">
+            <label class="input-label">Category</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <div class="cat-pill selected" style="font-size:12px;padding:6px 12px;">🏅 Best catch</div>
+              <div class="cat-pill" style="font-size:12px;padding:6px 12px;">⭐ Top scorer</div>
+              <div class="cat-pill" style="font-size:12px;padding:6px 12px;">😂 Banter</div>
+              <div class="cat-pill" style="font-size:12px;padding:6px 12px;">💪 Effort</div>
+            </div>
+          </div>
+          <div class="input-wrap">
+            <label class="input-label">Coins — tap to choose</label>
+            <div class="coin-selector">
+              <div class="coin filled" style="width:34px;height:34px;font-size:13px;">1</div>
+              <div class="coin filled" style="width:34px;height:34px;font-size:13px;">2</div>
+              <div class="coin filled" style="width:34px;height:34px;font-size:13px;">3</div>
+              <div class="coin filled" style="width:34px;height:34px;font-size:13px;">4</div>
+              <div class="coin filled" style="width:34px;height:34px;font-size:13px;">5</div>
+              <div class="coin active" style="width:34px;height:34px;font-size:13px;">6</div>
+              <div class="coin" style="width:34px;height:34px;font-size:13px;">7</div>
+              <div class="coin" style="width:34px;height:34px;font-size:13px;">8</div>
+              <div class="coin" style="width:34px;height:34px;font-size:13px;">9</div>
+              <div class="coin" style="width:34px;height:34px;font-size:13px;">10</div>
+            </div>
+          </div>
+          <div class="input-wrap">
+            <label class="input-label">Note (optional)</label>
+            <div class="glass" style="padding:10px 14px;border-radius:12px;font-size:13px;color:var(--slate-300);font-style:italic;min-height:56px;">That diving catch was unreal 🔥</div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;padding:14px;font-size:16px;">Submit nomination ✅</button>
+        </div>
+      </div>
+
+      <!-- Design rules card -->
+      <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:14px;">
+        <div class="glass" style="padding:20px;">
+          <div class="t-label" style="margin-bottom:12px;">Flat Shadow Rules</div>
+          <div style="font-size:13px;color:var(--slate-200);line-height:1.9;">
+            ✓ Shadows are always <strong style="color:#fff;">hard offset (x y 0)</strong> — no blur radius<br>
+            ✓ Amber offset shadows on <strong style="color:#fff;">interactive / accent</strong> elements only<br>
+            ✓ Hover = <strong style="color:#fff;">translate(-2px,-2px) + bigger shadow</strong><br>
+            ✓ Active/press = <strong style="color:#fff;">translate(4px,4px) + no shadow</strong><br>
+            ✗ No diffuse / blurred shadows<br>
+            ✗ Don't mix offset directions — always top-left lift<br>
+            ✗ Limit bold amber borders to 1 element per section
+          </div>
+        </div>
+        <div class="glass" style="padding:20px;">
+          <div class="t-label" style="margin-bottom:12px;">Animation Principles</div>
+          <div style="font-size:13px;color:var(--slate-200);line-height:1.9;">
+            Transitions: <strong style="color:#fff;">120–180ms ease</strong><br>
+            Hover lift: <strong style="color:#fff;">translate(-2px, -2px) + bigger shadow</strong><br>
+            Active press: <strong style="color:#fff;">translate(4px, 4px) + no shadow</strong><br>
+            Coin select: <strong style="color:#fff;">scale(1.1) burst</strong><br>
+            Nomination sent: <strong style="color:#fff;">Lottie confetti</strong><br>
+            Page transitions: <strong style="color:#fff;">slide up 300ms</strong>
+          </div>
+        </div>
+        <div class="glass-amber" style="padding:20px;">
+          <div class="t-label" style="margin-bottom:8px;color:var(--color-accent);">For Claude Code</div>
+          <div style="font-size:12px;color:var(--slate-300);line-height:1.8;">
+            Copy the <code style="color:var(--color-accent);font-family:var(--font-mono);">:root</code> variables block into your <code style="color:var(--color-accent);font-family:var(--font-mono);">globals.css</code>.<br>
+            Use <code style="color:var(--color-accent);font-family:var(--font-mono);">.flat</code>, <code style="color:var(--color-accent);font-family:var(--font-mono);">.flat-amber</code>, <code style="color:var(--color-accent);font-family:var(--font-mono);">.flat-heavy</code> classes.<br>
+            Bold offset shadows in <code style="color:var(--color-accent);font-family:var(--font-mono);">--shadow-amber-*</code> and <code style="color:var(--color-accent);font-family:var(--font-mono);">--shadow-*</code>.<br>
+            All components shown above are production-ready HTML+CSS — no framework required.<br>
+            React components should use <code style="color:var(--color-accent);font-family:var(--font-mono);">style</code> props or CSS Modules mirroring these token names.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       08 · BRAND ASSETS
+  ══════════════════════════════════════════════════════ -->
+  <div class="ds-section" id="brand">
+    <div class="ds-section-title">08 · Brand Assets</div>
+    <div class="ds-row" style="align-items:flex-start;gap:24px;">
+      <div class="glass" style="padding:24px;flex:1;min-width:240px;display:flex;flex-direction:column;gap:16px;">
+        <div class="t-label">JB Coin — Official Logo</div>
+        <div style="background:#0f0f10;border-radius:12px;padding:20px;display:flex;align-items:center;justify-content:center;border:2px solid var(--amber-500);box-shadow:4px 4px 0 var(--amber-600);">
+          <img src="uploads/logo coin.png" style="width:180px;height:180px;object-fit:contain;border-radius:50%;" alt="JB Coin logo" />
+        </div>
+        <div style="font-size:13px;color:var(--slate-300);line-height:1.8;">
+          The official JB coin — <strong style="color:#fff;">Jakaas Bandey · EST. 2026 · Legacy &amp; Pride</strong><br>
+          Use as the in-app coin icon throughout the leaderboard, nomination flow and profile screens.
+        </div>
+      </div>
+      <div class="glass" style="padding:24px;flex:1;min-width:240px;display:flex;flex-direction:column;gap:16px;">
+        <div class="t-label">Coin Usage Rules</div>
+        <div style="font-size:13px;color:var(--slate-200);line-height:1.9;">
+          ✓ Use at <strong style="color:#fff;">28×28px</strong> inline in leaderboard rows<br>
+          ✓ Use at <strong style="color:#fff;">48×48px</strong> on profile &amp; nomination screens<br>
+          ✓ Use at <strong style="color:#fff;">80×80px</strong> on confirmation &amp; reset screens<br>
+          ✗ Don't stretch or distort — always crop as circle<br>
+          ✗ Don't use on light backgrounds<br>
+          ✗ Don't add extra shadows — coin has its own depth
+        </div>
+        <div class="t-label" style="margin-top:4px;">Coin Selector Illustration</div>
+        <div style="background:#0f0f10;border-radius:12px;overflow:hidden;border:2px solid var(--amber-500);box-shadow:3px 3px 0 var(--amber-600);">
+          <img src="uploads/illus-coin-selector.png" style="width:100%;display:block;" alt="Coin selector" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding:40px 0;color:var(--slate-500);font-size:13px;border-top:1px solid var(--slate-600);">
+    JB Reward App Design System · Jakass Bandey Cricket Team · 2026<br>
+    <span style="color:var(--color-accent);font-weight:700;">Dark · Glass · Amber · Nunito · Hand-drawn</span>
+  </div>
+
+</div>
+</body>
+</html>
