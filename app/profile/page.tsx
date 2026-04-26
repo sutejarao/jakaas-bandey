@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { supabase, currentMonthYear, Nomination } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import AppShell from '@/components/AppShell';
@@ -17,10 +18,17 @@ type Stats = {
 };
 
 export default function ProfilePage() {
-  const { player } = useAuth();
+  const { player, loading, signOut } = useAuth();
+  const router = useRouter();
   const [nominations, setNominations] = useState<Nomination[]>([]);
   const [stats, setStats] = useState<Stats>({ totalCoins: 0, nominationCount: 0, categoryCount: 0 });
   const [fetching, setFetching] = useState(true);
+
+  useEffect(() => {
+    if (!loading && !player) {
+      router.replace('/jakaas_bandey/auth');
+    }
+  }, [loading, player, router]);
 
   useEffect(() => {
     if (!player) return;
@@ -43,7 +51,7 @@ export default function ProfilePage() {
     fetchNominations();
   }, [player]);
 
-  if (!player) return null;
+  if (loading || !player) return null;
 
   const roleBadge = player.role === 'admin' ? 'admin' : player.role === 'player' ? 'active' : player.role === 'guest' ? 'guest' : 'pending';
 
@@ -141,6 +149,23 @@ export default function ProfilePage() {
               Nominate someone +
             </button>
           </Link>
+          <button
+            onClick={signOut}
+            style={{
+              width: '100%',
+              padding: '14px',
+              background: 'transparent',
+              border: '2px solid #3a3a40',
+              borderRadius: 999,
+              color: '#71717a',
+              fontWeight: 700,
+              fontSize: 15,
+              fontFamily: "'Nunito', sans-serif",
+              cursor: 'pointer',
+            }}
+          >
+            Sign out
+          </button>
         </div>
       </div>
     </AppShell>

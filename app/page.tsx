@@ -147,7 +147,7 @@ export default function HomePage() {
           background: 'linear-gradient(to top, #0f0f10 70%, transparent)',
         }}
       >
-        <Link href="/nominate" style={{ display: 'block' }}>
+        <Link href={player ? '/nominate' : '/auth'} style={{ display: 'block' }}>
           <button className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: 16 }}>
             + Nominate someone
           </button>

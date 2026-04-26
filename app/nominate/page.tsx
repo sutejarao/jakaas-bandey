@@ -13,7 +13,7 @@ import CoinSelector from '@/components/CoinSelector';
 type Step = 'player' | 'category' | 'coins' | 'note' | 'success';
 
 export default function NominatePage() {
-  const { player } = useAuth();
+  const { player, loading } = useAuth();
   const router = useRouter();
 
   const [step, setStep] = useState<Step>('player');
@@ -25,6 +25,12 @@ export default function NominatePage() {
   const [note, setNote] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!loading && !player) {
+      router.replace('/jakaas_bandey/auth');
+    }
+  }, [loading, player, router]);
 
   useEffect(() => {
     supabase
