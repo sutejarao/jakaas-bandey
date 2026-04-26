@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -18,6 +19,22 @@ const inputStyle: React.CSSProperties = {
   marginBottom: 12,
 };
 
+async function ensurePlayer(user: User) {
+  const { data: existing } = await supabase
+    .from('players')
+    .select('id')
+    .eq('id', user.id)
+    .single();
+  if (!existing) {
+    await supabase.from('players').insert({
+      id: user.id,
+      email: user.email,
+      name: user.email,
+      role: 'pending',
+    });
+  }
+}
+
 export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,13 +44,14 @@ export default function AuthPage() {
   async function handleSignIn() {
     setLoading('signin');
     setError('');
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setError(error.message);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.user) {
+      setError(error?.message ?? 'Sign in failed');
       setLoading(null);
-    } else {
-      window.location.href = '/jakaas_bandey';
+      return;
     }
+    await ensurePlayer(data.user);
+    window.location.href = '/jakaas_bandey';
   }
 
   async function handleSignUp() {
@@ -46,13 +64,14 @@ export default function AuthPage() {
       return;
     }
     // Auto sign in after signup
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-    if (signInError) {
-      setError(signInError.message);
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError || !data.user) {
+      setError(signInError?.message ?? 'Sign in failed');
       setLoading(null);
-    } else {
-      window.location.href = '/jakaas_bandey';
+      return;
     }
+    await ensurePlayer(data.user);
+    window.location.href = '/jakaas_bandey';
   }
 
   function handleSubmit(e: React.FormEvent) {
