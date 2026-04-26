@@ -2,52 +2,51 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { supabase, currentMonthYear, formatMonthYear } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import AppShell from '@/components/AppShell';
 import MonthBanner from '@/components/MonthBanner';
 import LeaderboardRow from '@/components/LeaderboardRow';
 
-type LeaderboardEntry = {
-  player_id: string;
+type PlayerWithCoins = {
+  id: string;
   name: string;
-  initial: string;
-  coins: number;
+  email: string;
+  role: string;
+  avatar_url: string | null;
+  totalCoins: number;
 };
 
 export default function HomePage() {
   const { player } = useAuth();
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [entries, setEntries] = useState<PlayerWithCoins[]>([]);
   const [fetching, setFetching] = useState(true);
   const [monthLabel, setMonthLabel] = useState('');
 
   useEffect(() => {
-    const my = currentMonthYear();
-    setMonthLabel(formatMonthYear(my));
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    setMonthLabel(new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
 
     async function fetchLeaderboard() {
-      const [playersRes, nominationsRes] = await Promise.all([
-        supabase.from('players').select('id, name, avatar_initial, role'),
-        supabase.from('nominations').select('to_player_id, coins').eq('month_year', my),
-      ]);
+      const { data: players } = await supabase
+        .from('players')
+        .select('id, name, email, role, avatar_url')
+        .in('role', ['active', 'admin'])
+        .order('name');
 
-      const players = playersRes.data ?? [];
-      const active = players.filter((p) => p.role === 'active' || p.role === 'admin');
+      const { data: nominations } = await supabase
+        .from('nominations')
+        .select('nominee_id, coins')
+        .eq('month', currentMonth);
 
-      const coinsMap = new Map<string, number>();
-      for (const nom of nominationsRes.data ?? []) {
-        coinsMap.set(nom.to_player_id, (coinsMap.get(nom.to_player_id) ?? 0) + nom.coins);
-      }
+      const playerCoins: PlayerWithCoins[] = (players ?? []).map((p) => ({
+        ...p,
+        totalCoins: (nominations ?? [])
+          .filter((n) => n.nominee_id === p.id)
+          .reduce((sum, n) => sum + n.coins, 0),
+      })).sort((a, b) => b.totalCoins - a.totalCoins);
 
-      const all: LeaderboardEntry[] = active.map((p) => ({
-        player_id: p.id,
-        name: p.name,
-        initial: p.avatar_initial || p.name.charAt(0),
-        coins: coinsMap.get(p.id) ?? 0,
-      }));
-
-      all.sort((a, b) => b.coins - a.coins);
-      setEntries(all);
+      setEntries(playerCoins);
       setFetching(false);
     }
 
@@ -104,12 +103,12 @@ export default function HomePage() {
         ) : (
           entries.map((entry, i) => (
             <LeaderboardRow
-              key={entry.player_id}
+              key={entry.id}
               rank={i + 1}
               name={entry.name}
-              initial={entry.initial}
-              coins={entry.coins}
-              isMe={entry.player_id === player?.id}
+              initial={entry.name.charAt(0).toUpperCase()}
+              coins={entry.totalCoins}
+              isMe={entry.id === player?.id}
             />
           ))
         )}
