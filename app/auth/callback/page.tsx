@@ -1,44 +1,68 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
-export default function AuthCallbackPage() {
+const containerStyle: React.CSSProperties = {
+  minHeight: '100dvh',
+  background: '#0f0f10',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: '#71717a',
+  fontSize: 16,
+  fontFamily: "'Nunito', sans-serif",
+};
+
+function CallbackHandler() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
   useEffect(() => {
-    // Listen for SIGNED_IN, then hard-reload so AuthProvider reinitialises
-    // with the session that Supabase just stored in localStorage.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN') {
-        subscription.unsubscribe();
-        window.location.href = '/jakaas_bandey';
+    const code = searchParams.get('code');
+    if (!code) {
+      router.replace('/');
+      return;
+    }
+
+    (async () => {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error || !data.session) {
+        router.replace('/auth');
+        return;
       }
-    });
 
-    // Also check if the session is already present (code exchanged synchronously)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        subscription.unsubscribe();
-        window.location.href = '/jakaas_bandey';
+      const user = data.session.user;
+      const { data: existing } = await supabase
+        .from('players')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (!existing) {
+        const email = user.email ?? '';
+        const name = email.split('@')[0];
+        await supabase.from('players').insert({
+          id: user.id,
+          email,
+          name,
+          role: 'pending',
+          avatar_initial: name.charAt(0).toUpperCase(),
+        });
       }
-    });
 
-    return () => subscription.unsubscribe();
-  }, []);
+      router.replace('/');
+    })();
+  }, [searchParams, router]);
 
+  return <div style={containerStyle}>Signing you in…</div>;
+}
+
+export default function AuthCallbackPage() {
   return (
-    <div
-      style={{
-        minHeight: '100dvh',
-        background: '#0f0f10',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#71717a',
-        fontSize: 16,
-        fontFamily: "'Nunito', sans-serif",
-      }}
-    >
-      Signing you in…
-    </div>
+    <Suspense fallback={<div style={containerStyle}>Signing you in…</div>}>
+      <CallbackHandler />
+    </Suspense>
   );
 }
