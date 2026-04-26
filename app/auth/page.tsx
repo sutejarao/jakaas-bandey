@@ -19,28 +19,44 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<'signin' | 'signup' | null>(null);
   const [error, setError] = useState('');
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
+  async function handleSignIn() {
+    setLoading('signin');
     setError('');
-
-    const { error } =
-      mode === 'signin'
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password });
-
-    setLoading(false);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError(error.message);
+      setLoading(null);
     } else {
       window.location.href = '/jakaas_bandey';
     }
+  }
+
+  async function handleSignUp() {
+    setLoading('signup');
+    setError('');
+    const { error: signUpError } = await supabase.auth.signUp({ email, password });
+    if (signUpError) {
+      setError(signUpError.message);
+      setLoading(null);
+      return;
+    }
+    // Auto sign in after signup
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      setError(signInError.message);
+      setLoading(null);
+    } else {
+      window.location.href = '/jakaas_bandey';
+    }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
   }
 
   return (
@@ -61,9 +77,9 @@ export default function AuthPage() {
       <Image
         src="/jakaas_bandey/logo-coin.png"
         alt="JB Coin"
-        width={800}
-        height={800}
-        style={{ objectFit: 'cover', borderRadius: '50%', marginBottom: 28 }}
+        width={200}
+        height={200}
+        style={{ objectFit: 'cover', borderRadius: '50%', marginBottom: 24 }}
       />
       <h1 style={{ fontSize: 30, fontWeight: 900, color: '#ffffff', marginBottom: 8, textAlign: 'center' }}>
         JB Rewards
@@ -89,30 +105,27 @@ export default function AuthPage() {
         {error && (
           <p style={{ color: '#f87171', fontSize: 13, marginBottom: 10 }}>{error}</p>
         )}
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn-primary"
-          style={{ width: '100%', padding: '16px', fontSize: 16 }}
-        >
-          {loading ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Sign up'}
-        </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            type="button"
+            onClick={handleSignIn}
+            disabled={loading !== null}
+            className="btn-primary"
+            style={{ flex: 1, padding: '16px', fontSize: 16 }}
+          >
+            {loading === 'signin' ? 'Signing in…' : 'Sign in'}
+          </button>
+          <button
+            type="button"
+            onClick={handleSignUp}
+            disabled={loading !== null}
+            className="btn-secondary"
+            style={{ flex: 1, padding: '16px', fontSize: 16 }}
+          >
+            {loading === 'signup' ? 'Signing up…' : 'Sign up'}
+          </button>
+        </div>
       </form>
-
-      <button
-        onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError(''); }}
-        style={{
-          marginTop: 16,
-          background: 'transparent',
-          border: 'none',
-          color: '#a1a1aa',
-          fontSize: 14,
-          fontFamily: "'Nunito', sans-serif",
-          cursor: 'pointer',
-        }}
-      >
-        {mode === 'signin' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
-      </button>
     </div>
   );
 }
