@@ -7,14 +7,15 @@ import { useAuth } from '@/lib/auth-context';
 import AppShell from '@/components/AppShell';
 import MonthBanner from '@/components/MonthBanner';
 import LeaderboardRow from '@/components/LeaderboardRow';
+import { currentMonthYear } from '@/lib/supabase';
 
 type PlayerWithCoins = {
   id: string;
   name: string;
   email: string;
   role: string;
-  avatar_url: string | null;
-  totalCoins: number;
+  avatar_initial: string | null;
+  coins: number | null;
 };
 
 export default function HomePage() {
@@ -24,34 +25,41 @@ export default function HomePage() {
   const [monthLabel, setMonthLabel] = useState('');
 
   useEffect(() => {
-    const currentMonth = new Date().toISOString().slice(0, 7);
+    const monthYear = currentMonthYear();
     setMonthLabel(new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
 
     async function fetchLeaderboard() {
-      const { data: players } = await supabase
+      const { data: allPlayers } = await supabase
         .from('players')
-        .select('id, name, email, role, avatar_url')
-        .in('role', ['active', 'admin'])
-        .order('name');
+        .select('id, name, email, role, avatar_initial')
+        .order('created_at', { ascending: true });
 
       const { data: nominations } = await supabase
         .from('nominations')
-        .select('nominee_id, coins')
-        .eq('month', currentMonth);
+        .select('to_player_id, coins')
+        .eq('month_year', monthYear);
 
-      const playerCoins: PlayerWithCoins[] = (players ?? []).map((p) => ({
-        ...p,
-        totalCoins: (nominations ?? [])
-          .filter((n) => n.nominee_id === p.id)
-          .reduce((sum, n) => sum + n.coins, 0),
-      })).sort((a, b) => b.totalCoins - a.totalCoins);
+      const playerCoins: PlayerWithCoins[] = (allPlayers ?? []).map((p) => {
+        if (p.role === 'pending') return { ...p, coins: null };
+        const playerNoms = (nominations ?? []).filter((n) => n.to_player_id === p.id);
+        const total = playerNoms.reduce((sum, n) => sum + n.coins, 0);
+        return { ...p, coins: total };
+      });
 
-      setEntries(playerCoins);
+      const sorted = [
+        ...playerCoins.filter((p) => p.role !== 'pending').sort((a, b) => (b.coins ?? 0) - (a.coins ?? 0)),
+        ...playerCoins.filter((p) => p.role === 'pending'),
+      ];
+
+      setEntries(sorted);
       setFetching(false);
     }
 
     fetchLeaderboard();
   }, []);
+
+  const activeEntries = entries.filter((e) => e.role !== 'pending');
+  const pendingEntries = entries.filter((e) => e.role === 'pending');
 
   return (
     <AppShell>
@@ -66,7 +74,7 @@ export default function HomePage() {
           }}
         >
           <h1 style={{ fontSize: 22, fontWeight: 900, color: '#ffffff', margin: 0 }}>
-            🏏 JB Rewards
+            JB Rewards
           </h1>
           <span
             style={{
@@ -101,16 +109,29 @@ export default function HomePage() {
         {fetching ? (
           <div style={{ textAlign: 'center', padding: '48px 0', color: '#52525a' }}>Loading…</div>
         ) : (
-          entries.map((entry, i) => (
-            <LeaderboardRow
-              key={entry.id}
-              rank={i + 1}
-              name={entry.name}
-              initial={entry.name.charAt(0).toUpperCase()}
-              coins={entry.totalCoins}
-              isMe={entry.id === player?.id}
-            />
-          ))
+          <>
+            {activeEntries.map((entry, i) => (
+              <LeaderboardRow
+                key={entry.id}
+                rank={i + 1}
+                name={entry.name}
+                initial={(entry.avatar_initial || entry.name.charAt(0)).toUpperCase()}
+                coins={entry.coins}
+                isMe={entry.id === player?.id}
+              />
+            ))}
+            {pendingEntries.map((entry) => (
+              <LeaderboardRow
+                key={entry.id}
+                rank={0}
+                name={entry.name}
+                initial={(entry.avatar_initial || entry.name.charAt(0)).toUpperCase()}
+                coins={null}
+                isMe={entry.id === player?.id}
+                isPending
+              />
+            ))}
+          </>
         )}
       </div>
 
@@ -123,8 +144,12 @@ export default function HomePage() {
           background: 'linear-gradient(to top, #0f0f10 70%, transparent)',
         }}
       >
-        <Link href={player ? '/nominate' : '/auth'} style={{ display: 'block' }}>
-          <button className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: 16 }}>
+        <Link href={player && player.role !== 'pending' ? '/nominate' : '/auth'} style={{ display: 'block' }}>
+          <button
+            className="btn-primary"
+            style={{ width: '100%', padding: '16px', fontSize: 16 }}
+            disabled={player?.role === 'pending'}
+          >
             + Nominate someone
           </button>
         </Link>

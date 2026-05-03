@@ -29,8 +29,9 @@ async function ensurePlayer(user: User) {
     await supabase.from('players').insert({
       id: user.id,
       email: user.email,
-      name: user.email,
+      name: user.email?.split('@')[0] || 'New Player',
       role: 'pending',
+      avatar_initial: (user.email?.[0] || 'P').toUpperCase(),
     });
   }
 }

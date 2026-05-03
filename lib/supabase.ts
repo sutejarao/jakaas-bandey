@@ -16,7 +16,7 @@ export type Player = {
   id: string;
   name: string;
   email: string;
-  role: 'player' | 'admin' | 'pending' | 'guest';
+  role: 'active' | 'admin' | 'pending' | 'guest';
   avatar_initial: string | null;
   created_at: string;
 };

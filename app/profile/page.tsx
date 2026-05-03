@@ -53,7 +53,7 @@ export default function ProfilePage() {
 
   if (loading || !player) return null;
 
-  const roleBadge = player.role === 'admin' ? 'admin' : player.role === 'player' ? 'active' : player.role === 'guest' ? 'guest' : 'pending';
+  const roleBadge = player.role === 'admin' ? 'admin' : player.role === 'active' ? 'active' : player.role === 'guest' ? 'guest' : 'pending';
 
   return (
     <AppShell>

@@ -278,25 +278,46 @@ export default function AdminPage() {
               <div style={{ fontWeight: 700, fontSize: 14, color: '#ffffff' }}>{p.name}</div>
               <div style={{ fontSize: 12, color: '#71717a' }}>{p.email}</div>
             </div>
-            <select
-              value={p.role}
-              onChange={(e) => updatePlayerRole(p.id, e.target.value)}
-              style={{
-                background: '#222226',
-                border: '1.5px solid #3a3a40',
-                borderRadius: 8,
-                color: '#ffffff',
-                padding: '4px 8px',
-                fontSize: 13,
-                fontFamily: "'Nunito', sans-serif",
-                cursor: 'pointer',
-              }}
-            >
-              <option value="pending">Pending</option>
-              <option value="player">Player</option>
-              <option value="admin">Admin</option>
-              <option value="guest">Guest</option>
-            </select>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {p.role === 'pending' && (
+                <button
+                  onClick={() => updatePlayerRole(p.id, 'active')}
+                  style={{
+                    background: '#1a3a1a',
+                    border: '1.5px solid #166534',
+                    borderRadius: 8,
+                    color: '#4ade80',
+                    padding: '4px 10px',
+                    fontSize: 12,
+                    fontWeight: 800,
+                    fontFamily: "'Nunito', sans-serif",
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Activate →
+                </button>
+              )}
+              <select
+                value={p.role}
+                onChange={(e) => updatePlayerRole(p.id, e.target.value)}
+                style={{
+                  background: '#222226',
+                  border: '1.5px solid #3a3a40',
+                  borderRadius: 8,
+                  color: '#ffffff',
+                  padding: '4px 8px',
+                  fontSize: 13,
+                  fontFamily: "'Nunito', sans-serif",
+                  cursor: 'pointer',
+                }}
+              >
+                <option value="pending">Pending</option>
+                <option value="active">Active</option>
+                <option value="admin">Admin</option>
+                <option value="guest">Guest</option>
+              </select>
+            </div>
           </div>
         ))}
       </div>

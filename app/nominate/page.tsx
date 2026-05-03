@@ -30,13 +30,18 @@ export default function NominatePage() {
     if (!loading && !player) {
       router.replace('/auth');
     }
+    if (!loading && player?.role === 'pending') {
+      router.replace('/');
+    }
   }, [loading, player, router]);
 
   useEffect(() => {
+    if (!player) return;
     supabase
       .from('players')
       .select('*')
-      .eq('role', 'player')
+      .in('role', ['active', 'admin'])
+      .neq('id', player.id)
       .order('name')
       .then(({ data }) => setPlayers(data || []));
 
