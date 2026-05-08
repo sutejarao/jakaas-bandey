@@ -50,7 +50,7 @@ export default function NominatePage() {
       .select('*')
       .order('label')
       .then(({ data }) => setCategories(data || []));
-  }, []);
+  }, [player]);
 
   async function handleSubmit() {
     if (!player || !selectedPlayer || !selectedCategory || !coins) return;

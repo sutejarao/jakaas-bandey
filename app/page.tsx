@@ -19,12 +19,13 @@ type PlayerWithCoins = {
 };
 
 export default function HomePage() {
-  const { player } = useAuth();
+  const { player, loading } = useAuth();
   const [entries, setEntries] = useState<PlayerWithCoins[]>([]);
   const [fetching, setFetching] = useState(true);
   const [monthLabel, setMonthLabel] = useState('');
 
   useEffect(() => {
+    if (loading) return;
     const monthYear = currentMonthYear();
     setMonthLabel(new Date().toLocaleString('default', { month: 'long', year: 'numeric' }));
 
@@ -56,7 +57,7 @@ export default function HomePage() {
     }
 
     fetchLeaderboard();
-  }, []);
+  }, [loading]);
 
   const activeEntries = entries.filter((e) => e.role !== 'pending');
   const pendingEntries = entries.filter((e) => e.role === 'pending');
