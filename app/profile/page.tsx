@@ -78,7 +78,7 @@ export default function ProfilePage() {
           }}
         >
           {[
-            { label: 'Coins', value: stats.totalCoins, icon: '/jakaas_bandey/logo-coin.png' },
+            { label: 'Coins', value: stats.totalCoins, icon: '/ logo-coin.png' },
             { label: 'Nominations', value: stats.nominationCount, icon: null },
             { label: 'Categories', value: stats.categoryCount, icon: null },
           ].map(({ label, value, icon }) => (
