@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import type { User } from '@supabase/supabase-js';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -19,24 +19,8 @@ const inputStyle: React.CSSProperties = {
   marginBottom: 12,
 };
 
-async function ensurePlayer(user: User) {
-  const { data: existing } = await supabase
-    .from('players')
-    .select('id')
-    .eq('id', user.id)
-    .single();
-  if (!existing) {
-    await supabase.from('players').insert({
-      id: user.id,
-      email: user.email,
-      name: user.email?.split('@')[0] || 'New Player',
-      role: 'pending',
-      avatar_initial: (user.email?.[0] || 'P').toUpperCase(),
-    });
-  }
-}
-
 export default function AuthPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState<'signin' | 'signup' | null>(null);
@@ -51,8 +35,7 @@ export default function AuthPage() {
       setLoading(null);
       return;
     }
-    await ensurePlayer(data.user);
-    window.location.href = '/jakaas_bandey';
+    router.push('/');
   }
 
   async function handleSignUp() {
@@ -71,8 +54,24 @@ export default function AuthPage() {
       setLoading(null);
       return;
     }
-    await ensurePlayer(data.user);
-    window.location.href = '/jakaas_bandey';
+    // Ensure player row exists before navigating
+    const { data: existingPlayer } = await supabase
+      .from('players')
+      .select('id')
+      .eq('id', data.user.id)
+      .single();
+
+    if (!existingPlayer) {
+      const userEmail = data.user.email ?? '';
+      const name = userEmail.split('@')[0] || 'New Player';
+      const avatar_initial = (userEmail[0] || 'P').toUpperCase();
+      await supabase
+        .from('players')
+        .insert({ id: data.user.id, name, email: userEmail, role: 'pending', avatar_initial })
+        .select()
+        .single();
+    }
+    router.push('/');
   }
 
   function handleSubmit(e: React.FormEvent) {
