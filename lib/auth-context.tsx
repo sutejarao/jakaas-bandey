@@ -35,20 +35,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (data) {
       setPlayer(data);
-    } else {
-      const email = u.email ?? '';
-      const name = email.split('@')[0];
-      const avatar_initial = name.charAt(0).toUpperCase();
-      const { data: newPlayer } = await supabase
+      return;
+    }
+
+    const email = u.email ?? '';
+    const name = email.split('@')[0] || 'New Player';
+    const avatar_initial = (email[0] || 'P').toUpperCase();
+    const { data: newPlayer, error } = await supabase
+      .from('players')
+      .insert({ id: u.id, name, email, role: 'pending', avatar_initial })
+      .select()
+      .single();
+
+    if (newPlayer) {
+      setPlayer(newPlayer);
+    } else if (error?.code === '23505') {
+      // Another concurrent call already inserted the row — fetch it
+      const { data: existing } = await supabase
         .from('players')
-        .insert({ id: u.id, name, email, role: 'pending', avatar_initial })
-        .select()
+        .select('*')
+        .eq('id', u.id)
         .single();
-      setPlayer(newPlayer ?? null);
+      setPlayer(existing ?? null);
     }
   }
 
   useEffect(() => {
+    // getSession() reads the persisted session immediately on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -59,7 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // INITIAL_SESSION duplicates getSession() above — skip it to prevent a
+      // concurrent double-insert race on the players table
+      if (event === 'INITIAL_SESSION') return;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
