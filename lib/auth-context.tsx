@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .from('players')
       .select('*')
       .eq('id', u.id)
-      .single();
+      .maybeSingle();
 
     if (data) {
       setPlayer(data);

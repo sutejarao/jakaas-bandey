@@ -309,9 +309,9 @@ describe('Auth and Signup', () => {
   });
 
   test('new player redirected to leaderboard after signup', () => {
-    // app/auth/page.tsx: window.location.href = '/jakaas_bandey' after ensurePlayer
-    const redirectTarget = '/jakaas_bandey';
-    expect(redirectTarget).toBe('/jakaas_bandey');
+    // app/auth/page.tsx: router.push('/') after ensurePlayer
+    const redirectTarget = '/';
+    expect(redirectTarget).toBe('/');
   });
 
   test('pending player sees leaderboard but nominate is locked', () => {

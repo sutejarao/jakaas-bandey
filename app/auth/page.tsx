@@ -69,7 +69,7 @@ export default function AuthPage() {
         .from('players')
         .insert({ id: data.user.id, name, email: userEmail, role: 'pending', avatar_initial })
         .select()
-        .single();
+        .maybeSingle();
     }
     router.push('/');
   }
