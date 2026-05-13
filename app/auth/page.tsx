@@ -113,7 +113,7 @@ export default function AuthPage() {
       <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: 20 }}>
         <input
           type="text"
-          placeholder="Your name e.g. Rajan"
+          placeholder="Your name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           style={inputStyle}

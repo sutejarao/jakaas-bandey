@@ -135,25 +135,6 @@ export default function HomePage() {
             ))}
           </>
         )}
-        {/* Pending message */}
-        {player?.role === 'pending' && (
-          <div
-            style={{
-              margin: '16px 0 8px',
-              background: 'rgba(255,179,0,0.07)',
-              border: '1.5px solid #FFB300',
-              borderRadius: 14,
-              padding: '14px 16px',
-            }}
-          >
-            <div style={{ fontWeight: 800, fontSize: 15, color: '#FFB300', marginBottom: 4 }}>
-              ⏳ You're on the bench for now!
-            </div>
-            <div style={{ fontSize: 13, color: '#71717a', lineHeight: 1.5 }}>
-              Once the admin activates your account you'll be able to nominate your teammates. Sit tight — good things come to those who wait! 🏏
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Sticky CTA */}
@@ -175,6 +156,27 @@ export default function HomePage() {
           </button>
         </Link>
       </div>
+
+      {/* Pending message */}
+      {player?.role === 'pending' && (
+        <div style={{ padding: '0 16px 24px' }}>
+          <div
+            style={{
+              background: 'rgba(255,179,0,0.07)',
+              border: '1.5px solid #FFB300',
+              borderRadius: 14,
+              padding: '14px 16px',
+            }}
+          >
+            <div style={{ fontWeight: 800, fontSize: 15, color: '#FFB300', marginBottom: 4 }}>
+              ⏳ You're on the bench for now!
+            </div>
+            <div style={{ fontSize: 13, color: '#71717a', lineHeight: 1.5 }}>
+              Once the admin activates your account you'll be able to nominate your teammates. Sit tight — good things come to those who wait! 🏏
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }
