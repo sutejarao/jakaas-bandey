@@ -62,7 +62,7 @@ export default function LeaderboardRow({ rank, name, initial, coins, isMe = fals
           <span style={{ fontWeight: 800, fontSize: 16, color: '#52525a' }}>—</span>
         ) : (
           <>
-            <Image src="/jakaas_bandey/logo-coin.png" alt="coins" width={28} height={28} />
+            <Image src="/logo-coin.png" alt="coins" width={28} height={28} />
             <span style={{ fontWeight: 800, fontSize: 16, color: '#FFB300' }}>{coins}</span>
           </>
         )}
