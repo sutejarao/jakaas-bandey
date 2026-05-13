@@ -87,16 +87,16 @@ function activatePlayer<T extends { role: string }>(player: T): T {
 /** Mirrors handleReset in app/admin/page.tsx */
 function simulateMonthReset(
   playerStats: { id: string; totalCoins: number }[],
-  nominations: { id: string; month: string }[],
+  nominations: { id: string; month_year: string }[],
   monthYear: string
 ) {
   const archived = playerStats.map((s, i) => ({
     player_id: s.id,
-    month: monthYear,
+    month_year: monthYear,
     total_coins: s.totalCoins,
     rank: i + 1,
   }));
-  const remaining = nominations.filter((n) => n.month !== monthYear);
+  const remaining = nominations.filter((n) => n.month_year !== monthYear);
   return { archived, remaining };
 }
 
@@ -269,13 +269,14 @@ describe('Nomination Flow', () => {
       category: 'Top Scorer',
       coins: 8,
       note: null,
-      month: '2025-05',
+      month_year: '2025-05',
+      week_number: 1,
     };
     expect(payload.nominator_id).toBe('dev-uuid');
     expect(payload.nominee_id).toBe('rajan-uuid');
     expect(payload.coins).toBeGreaterThanOrEqual(1);
     expect(payload.coins).toBeLessThanOrEqual(10);
-    expect(payload.month).toMatch(/^\d{4}-\d{2}$/);
+    expect(payload.month_year).toMatch(/^\d{4}-\d{2}$/);
   });
 
   test('success screen shown after submission', () => {
@@ -378,9 +379,9 @@ describe('Admin Panel', () => {
       { id: 'tariq-uuid', totalCoins: 31 },
     ];
     const nominations = [
-      { id: 'nom-1', month: '2025-05' },
-      { id: 'nom-2', month: '2025-05' },
-      { id: 'nom-3', month: '2025-04' },
+      { id: 'nom-1', month_year: '2025-05' },
+      { id: 'nom-2', month_year: '2025-05' },
+      { id: 'nom-3', month_year: '2025-04' },
     ];
     const { archived, remaining } = simulateMonthReset(stats, nominations, '2025-05');
 
@@ -392,7 +393,7 @@ describe('Admin Panel', () => {
 
     // Current-month nominations are cleared; prior months untouched
     expect(remaining).toHaveLength(1);
-    expect(remaining[0].month).toBe('2025-04');
+    expect(remaining[0].month_year).toBe('2025-04');
   });
 });
 
