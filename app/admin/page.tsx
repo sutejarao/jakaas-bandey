@@ -58,7 +58,7 @@ export default function AdminPage() {
     const [nominationsRes, playersRes] = await Promise.all([
       supabase
         .from('nominations')
-        .select('to_player_id, coins, players!nominations_to_player_id_fkey(name, avatar_initial)')
+        .select('nominee_id, coins, players!nominations_nominee_id_fkey(name, avatar_initial)')
         .eq('month_year', my),
       supabase.from('players').select('*').order('name'),
     ]);
@@ -72,13 +72,13 @@ export default function AdminPage() {
     for (const nom of nominations) {
       const p = (Array.isArray(nom.players) ? nom.players[0] : nom.players) as { name: string; avatar_initial: string } | null;
       if (!p) continue;
-      const existing = map.get(nom.to_player_id);
+      const existing = map.get(nom.nominee_id);
       if (existing) {
         existing.totalCoins += nom.coins;
         existing.nominationCount += 1;
       } else {
-        map.set(nom.to_player_id, {
-          id: nom.to_player_id,
+        map.set(nom.nominee_id, {
+          id: nom.nominee_id,
           name: p.name,
           initial: p.avatar_initial || p.name.charAt(0),
           totalCoins: nom.coins,

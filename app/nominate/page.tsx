@@ -56,9 +56,9 @@ export default function NominatePage() {
     setSubmitting(true);
     setError('');
     const { error } = await supabase.from('nominations').insert({
-      from_player_id: player.id,
-      to_player_id: selectedPlayer.id,
-      category: selectedCategory.label,
+      nominator_id: player.id,
+      nominee_id: selectedPlayer.id,
+      category: selectedCategory.name,
       coins,
       note: note.trim() || null,
       month_year: currentMonthYear(),
@@ -229,7 +229,7 @@ export default function NominatePage() {
                 <CategoryPill
                   key={cat.id}
                   emoji={cat.emoji}
-                  label={cat.label}
+                  label={cat.name}
                   selected={selectedCategory?.id === cat.id}
                   onClick={() => setSelectedCategory(cat)}
                 />
@@ -255,15 +255,6 @@ export default function NominatePage() {
             <p style={{ color: '#71717a', fontSize: 14, marginBottom: 16 }}>
               1 = nice, 10 = absolute legend
             </p>
-            <div style={{ textAlign: 'center', marginBottom: 20 }}>
-              <Image
-                src="/jakaas_bandey/illustrations/illus-coin-selector.png"
-                alt="Coin selector"
-                width={160}
-                height={120}
-                style={{ objectFit: 'contain' }}
-              />
-            </div>
             <CoinSelector value={coins} onChange={setCoins} />
             <button
               className="btn-primary"
@@ -290,7 +281,7 @@ export default function NominatePage() {
             <div className="card" style={{ padding: '12px 16px', marginBottom: 20 }}>
               <div style={{ color: '#a1a1aa', fontSize: 13, marginBottom: 6 }}>Nomination summary</div>
               <div style={{ fontWeight: 700, color: '#ffffff', fontSize: 15 }}>
-                {selectedCategory?.emoji} {selectedCategory?.label} → {selectedPlayer?.name}
+                {selectedCategory?.emoji} {selectedCategory?.name} → {selectedPlayer?.name}
               </div>
               <div style={{ color: '#FFB300', fontWeight: 800, fontSize: 14, marginTop: 4 }}>
                 {coins} coin{coins !== 1 ? 's' : ''}

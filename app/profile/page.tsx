@@ -35,8 +35,8 @@ export default function ProfilePage() {
     async function fetchNominations() {
       const { data } = await supabase
         .from('nominations')
-        .select('*, from_player:players!nominations_from_player_id_fkey(name, avatar_initial)')
-        .eq('to_player_id', player!.id)
+        .select('*, from_player:players!nominations_nominator_id_fkey(name, avatar_initial)')
+        .eq('nominee_id', player!.id)
         .eq('month_year', currentMonthYear())
         .order('created_at', { ascending: false });
 

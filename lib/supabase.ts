@@ -23,8 +23,8 @@ export type Player = {
 
 export type Nomination = {
   id: string;
-  from_player_id: string;
-  to_player_id: string;
+  nominator_id: string;
+  nominee_id: string;
   category: string;
   coins: number;
   note: string | null;
@@ -37,7 +37,7 @@ export type Nomination = {
 export type Category = {
   id: string;
   emoji: string;
-  label: string;
+  name: string;
 };
 
 export type MonthlyResult = {

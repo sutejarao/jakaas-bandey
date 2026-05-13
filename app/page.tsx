@@ -37,11 +37,11 @@ export default function HomePage() {
 
       const { data: nominations } = await supabase
         .from('nominations')
-        .select('to_player_id, coins')
+        .select('nominee_id, coins')
         .eq('month_year', monthYear);
 
       const playerCoins: PlayerWithCoins[] = (allPlayers ?? []).map((p) => {
-        const playerNoms = (nominations ?? []).filter((n) => n.to_player_id === p.id);
+        const playerNoms = (nominations ?? []).filter((n) => n.nominee_id === p.id);
         const total = playerNoms.reduce((sum, n) => sum + n.coins, 0);
         return { ...p, coins: total };
       });
