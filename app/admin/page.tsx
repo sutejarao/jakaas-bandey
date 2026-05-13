@@ -58,7 +58,7 @@ export default function AdminPage() {
     const [nominationsRes, playersRes] = await Promise.all([
       supabase
         .from('nominations')
-        .select('nominee_id, coins, players!nominations_nominee_id_fkey(name, avatar_initial)')
+        .select('nominee_id, coins, players!nominations_nominee_id_fkey(name, avatar_url)')
         .eq('month', my),
       supabase.from('players').select('*').order('name'),
     ]);
@@ -70,7 +70,7 @@ export default function AdminPage() {
 
     const map = new Map<string, PlayerStats>();
     for (const nom of nominations) {
-      const p = (Array.isArray(nom.players) ? nom.players[0] : nom.players) as { name: string; avatar_initial: string } | null;
+      const p = (Array.isArray(nom.players) ? nom.players[0] : nom.players) as { name: string; avatar_url: string } | null;
       if (!p) continue;
       const existing = map.get(nom.nominee_id);
       if (existing) {
@@ -80,7 +80,7 @@ export default function AdminPage() {
         map.set(nom.nominee_id, {
           id: nom.nominee_id,
           name: p.name,
-          initial: p.avatar_initial || p.name.charAt(0),
+          initial: p.avatar_url || p.name.charAt(0),
           totalCoins: nom.coins,
           nominationCount: 1,
           avgCoins: 0,
@@ -283,7 +283,7 @@ export default function AdminPage() {
                 flexShrink: 0,
               }}
             >
-              {(p.avatar_initial || p.name.charAt(0)).toUpperCase()}
+              {(p.avatar_url || p.name.charAt(0)).toUpperCase()}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 700, fontSize: 14, color: '#ffffff' }}>{p.name}</div>

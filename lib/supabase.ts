@@ -17,7 +17,7 @@ export type Player = {
   name: string;
   email: string;
   role: 'active' | 'admin' | 'pending' | 'guest';
-  avatar_initial: string | null;
+  avatar_url: string | null;
   created_at: string;
 };
 
@@ -25,13 +25,13 @@ export type Nomination = {
   id: string;
   nominator_id: string;
   nominee_id: string;
-  category: string;
+  category_id: string;
   coins: number;
   note: string | null;
-  month_year: string;
+  month: string;
   created_at: string;
-  from_player?: Player;
-  to_player?: Player;
+  nominator?: Player;
+  nominee?: Player;
 };
 
 export type Category = {

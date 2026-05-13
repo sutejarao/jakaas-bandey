@@ -35,7 +35,7 @@ export default function ProfilePage() {
     async function fetchNominations() {
       const { data } = await supabase
         .from('nominations')
-        .select('*, from_player:players!nominations_nominator_id_fkey(name, avatar_initial)')
+        .select('*, nominator:players!nominations_nominator_id_fkey(name, avatar_url)')
         .eq('nominee_id', player!.id)
         .eq('month', currentMonthYear())
         .order('created_at', { ascending: false });
@@ -43,7 +43,7 @@ export default function ProfilePage() {
       if (data) {
         setNominations(data);
         const totalCoins = data.reduce((acc, n) => acc + n.coins, 0);
-        const categories = new Set(data.map((n) => n.category));
+        const categories = new Set(data.map((n) => n.category_id));
         setStats({ totalCoins, nominationCount: data.length, categoryCount: categories.size });
       }
       setFetching(false);
@@ -60,7 +60,7 @@ export default function ProfilePage() {
       <div style={{ padding: '24px 16px' }}>
         {/* Avatar + name */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
-          <PlayerAvatar initial={player.avatar_initial || player.name.charAt(0)} size="xl" accent />
+          <PlayerAvatar initial={player.avatar_url || player.name.charAt(0)} size="xl" accent />
           <h1 style={{ fontSize: 24, fontWeight: 900, color: '#ffffff', margin: '14px 0 6px' }}>
             {player.name}
           </h1>
@@ -120,19 +120,19 @@ export default function ProfilePage() {
           </div>
         ) : (
           nominations.map((nom) => {
-            const fromPlayer = nom.from_player as { name: string } | null;
+            const fromPlayer = nom.nominator as { name: string } | null;
             return (
               <NominationCard
                 key={nom.id}
                 categoryEmoji={
-                  nom.category === 'Best catch' ? '🏅'
-                    : nom.category === 'Top scorer' ? '⭐'
-                    : nom.category === 'Best banter' ? '😂'
-                    : nom.category === 'Most effort' ? '💪'
-                    : nom.category === 'Match winner' ? '🎯'
+                  nom.category_id === 'Best catch' ? '🏅'
+                    : nom.category_id === 'Top scorer' ? '⭐'
+                    : nom.category_id === 'Best banter' ? '😂'
+                    : nom.category_id === 'Most effort' ? '💪'
+                    : nom.category_id === 'Match winner' ? '🎯'
                     : '🤝'
                 }
-                categoryLabel={nom.category}
+                categoryLabel={nom.category_id}
                 coins={nom.coins}
                 fromName={fromPlayer?.name || 'Someone'}
                 note={nom.note}

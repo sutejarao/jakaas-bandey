@@ -34,12 +34,12 @@ type PlayerRow = {
 /** Mirrors the buildLeaderboard logic in app/page.tsx */
 function buildLeaderboard(
   players: PlayerRow[],
-  nominations: { to_player_id: string; coins: number }[],
+  nominations: { nominee_id: string; coins: number }[],
   _monthYear: string
 ): PlayerRow[] {
   const playerCoins: PlayerRow[] = players.map((p) => {
     if (p.role === 'pending') return { ...p, coins: null };
-    const playerNoms = nominations.filter((n) => n.to_player_id === p.id);
+    const playerNoms = nominations.filter((n) => n.nominee_id === p.id);
     const total = playerNoms.reduce((sum, n) => sum + n.coins, 0);
     return { ...p, coins: total };
   });
@@ -87,26 +87,26 @@ function activatePlayer<T extends { role: string }>(player: T): T {
 /** Mirrors handleReset in app/admin/page.tsx */
 function simulateMonthReset(
   playerStats: { id: string; totalCoins: number }[],
-  nominations: { id: string; month_year: string }[],
+  nominations: { id: string; month: string }[],
   monthYear: string
 ) {
   const archived = playerStats.map((s, i) => ({
     player_id: s.id,
-    month_year: monthYear,
+    month: monthYear,
     total_coins: s.totalCoins,
     rank: i + 1,
   }));
-  const remaining = nominations.filter((n) => n.month_year !== monthYear);
+  const remaining = nominations.filter((n) => n.month !== monthYear);
   return { archived, remaining };
 }
 
 // ── Shared nomination fixture ─────────────────────────────────────────────────
 
 const MAY_NOMINATIONS = [
-  { to_player_id: 'rajan-uuid', coins: 10 },
-  { to_player_id: 'rajan-uuid', coins: 8 },
-  { to_player_id: 'dev-uuid', coins: 7 },
-  { to_player_id: 'tariq-uuid', coins: 5 },
+  { nominee_id: 'rajan-uuid', coins: 10 },
+  { nominee_id: 'rajan-uuid', coins: 8 },
+  { nominee_id: 'dev-uuid', coins: 7 },
+  { nominee_id: 'tariq-uuid', coins: 5 },
 ];
 
 // =============================================================================
@@ -264,18 +264,18 @@ describe('Nomination Flow', () => {
   test('submitting creates a DB record', () => {
     // The insert payload shape that handleSubmit sends to Supabase.
     const payload = {
-      from_player_id: 'dev-uuid',
-      to_player_id: 'rajan-uuid',
+      nominator_id: 'dev-uuid',
+      nominee_id: 'rajan-uuid',
       category: 'Top Scorer',
       coins: 8,
       note: null,
-      month_year: '2025-05',
+      month: '2025-05',
     };
-    expect(payload.from_player_id).toBe('dev-uuid');
-    expect(payload.to_player_id).toBe('rajan-uuid');
+    expect(payload.nominator_id).toBe('dev-uuid');
+    expect(payload.nominee_id).toBe('rajan-uuid');
     expect(payload.coins).toBeGreaterThanOrEqual(1);
     expect(payload.coins).toBeLessThanOrEqual(10);
-    expect(payload.month_year).toMatch(/^\d{4}-\d{2}$/);
+    expect(payload.month).toMatch(/^\d{4}-\d{2}$/);
   });
 
   test('success screen shown after submission', () => {
@@ -303,7 +303,7 @@ describe('Auth and Signup', () => {
       email: user.email,
       name: user.email?.split('@')[0] || 'New Player',
       role: 'pending',
-      avatar_initial: (user.email?.[0] || 'P').toUpperCase(),
+      avatar_url: (user.email?.[0] || 'P').toUpperCase(),
     };
     expect(insertPayload.role).toBe('pending');
   });
@@ -378,9 +378,9 @@ describe('Admin Panel', () => {
       { id: 'tariq-uuid', totalCoins: 31 },
     ];
     const nominations = [
-      { id: 'nom-1', month_year: '2025-05' },
-      { id: 'nom-2', month_year: '2025-05' },
-      { id: 'nom-3', month_year: '2025-04' },
+      { id: 'nom-1', month: '2025-05' },
+      { id: 'nom-2', month: '2025-05' },
+      { id: 'nom-3', month: '2025-04' },
     ];
     const { archived, remaining } = simulateMonthReset(stats, nominations, '2025-05');
 
@@ -392,7 +392,7 @@ describe('Admin Panel', () => {
 
     // Current-month nominations are cleared; prior months untouched
     expect(remaining).toHaveLength(1);
-    expect(remaining[0].month_year).toBe('2025-04');
+    expect(remaining[0].month).toBe('2025-04');
   });
 });
 

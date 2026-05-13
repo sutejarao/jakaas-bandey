@@ -64,10 +64,10 @@ export default function AuthPage() {
     if (!existingPlayer) {
       const userEmail = data.user.email ?? '';
       const name = userEmail.split('@')[0] || 'New Player';
-      const avatar_initial = (userEmail[0] || 'P').toUpperCase();
+      const avatar_url = (userEmail[0] || 'P').toUpperCase();
       await supabase
         .from('players')
-        .insert({ id: data.user.id, name, email: userEmail, role: 'pending', avatar_initial })
+        .insert({ id: data.user.id, name, email: userEmail, role: 'pending', avatar_url })
         .select()
         .maybeSingle();
     }

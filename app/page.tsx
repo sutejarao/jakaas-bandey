@@ -14,7 +14,7 @@ type PlayerWithCoins = {
   name: string;
   email: string;
   role: string;
-  avatar_initial: string | null;
+  avatar_url: string | null;
   coins: number | null;
 };
 
@@ -32,8 +32,7 @@ export default function HomePage() {
     async function fetchLeaderboard() {
       const { data: allPlayers } = await supabase
         .from('players')
-        .select('id, name, email, role, avatar_initial')
-        .order('coin_total', { ascending: false, nullsFirst: false });
+        .select('id, name, email, role, avatar_url');
 
       const { data: nominations } = await supabase
         .from('nominations')
@@ -115,7 +114,7 @@ export default function HomePage() {
                 key={entry.id}
                 rank={i + 1}
                 name={entry.name}
-                initial={(entry.avatar_initial || entry.name.charAt(0)).toUpperCase()}
+                initial={(entry.avatar_url || entry.name.charAt(0)).toUpperCase()}
                 coins={entry.coins}
                 isMe={entry.id === player?.id}
               />
@@ -125,7 +124,7 @@ export default function HomePage() {
                 key={entry.id}
                 rank={0}
                 name={entry.name}
-                initial={(entry.avatar_initial || entry.name.charAt(0)).toUpperCase()}
+                initial={(entry.avatar_url || entry.name.charAt(0)).toUpperCase()}
                 coins={null}
                 isMe={entry.id === player?.id}
                 isPending

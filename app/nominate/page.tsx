@@ -206,7 +206,7 @@ export default function NominatePage() {
                     (e.currentTarget as HTMLElement).style.boxShadow = '3px 3px 0 #3a3a40';
                   }}
                 >
-                  <PlayerAvatar initial={p.avatar_initial || p.name.charAt(0)} size="sm" />
+                  <PlayerAvatar initial={p.avatar_url || p.name.charAt(0)} size="sm" />
                   <span style={{ fontWeight: 700, fontSize: 15, color: '#ffffff' }}>{p.name}</span>
                   <span style={{ marginLeft: 'auto', color: '#52525a', fontSize: 18 }}>→</span>
                 </button>

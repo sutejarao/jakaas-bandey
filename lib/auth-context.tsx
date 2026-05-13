@@ -40,10 +40,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const email = u.email ?? '';
     const name = email.split('@')[0] || 'New Player';
-    const avatar_initial = (email[0] || 'P').toUpperCase();
+    const avatar_url = (email[0] || 'P').toUpperCase();
     const { data: newPlayer, error } = await supabase
       .from('players')
-      .insert({ id: u.id, name, email, role: 'pending', avatar_initial })
+      .insert({ id: u.id, name, email, role: 'pending', avatar_url })
       .select()
       .single();
 
