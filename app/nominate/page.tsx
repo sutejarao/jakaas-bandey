@@ -58,7 +58,7 @@ export default function NominatePage() {
     const { error } = await supabase.from('nominations').insert({
       nominator_id: player.id,
       nominee_id: selectedPlayer.id,
-      category: selectedCategory.name,
+      category_id: selectedCategory.id,
       coins,
       note: note.trim() || null,
       month_year: currentMonthYear(),
