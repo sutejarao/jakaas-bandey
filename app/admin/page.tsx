@@ -119,9 +119,20 @@ export default function AdminPage() {
     fetchData(monthYear);
   }
 
+  // NOTE: Supabase RLS must allow admins to update any player row.
+  // Add a policy: "Allow admin to update players"
+  //   FOR UPDATE USING (auth.uid() IN (SELECT id FROM players WHERE role = 'admin'))
+  async function handleActivate(playerId: string) {
+    await supabase
+      .from('players')
+      .update({ role: 'active' })
+      .eq('id', playerId);
+    fetchData(monthYear);
+  }
+
   async function updatePlayerRole(playerId: string, role: string) {
     await supabase.from('players').update({ role }).eq('id', playerId);
-    if (monthYear) fetchData(monthYear);
+    fetchData(monthYear);
   }
 
   if (loading) return <LoadingScreen />;
@@ -281,7 +292,7 @@ export default function AdminPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               {p.role === 'pending' && (
                 <button
-                  onClick={() => updatePlayerRole(p.id, 'active')}
+                  onClick={() => handleActivate(p.id)}
                   style={{
                     background: '#1a3a1a',
                     border: '1.5px solid #166534',

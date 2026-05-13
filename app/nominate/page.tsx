@@ -40,7 +40,6 @@ export default function NominatePage() {
     supabase
       .from('players')
       .select('*')
-      .in('role', ['active', 'admin'])
       .neq('id', player.id)
       .order('name')
       .then(({ data }) => setPlayers(data || []));

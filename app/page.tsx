@@ -33,7 +33,7 @@ export default function HomePage() {
       const { data: allPlayers } = await supabase
         .from('players')
         .select('id, name, email, role, avatar_initial')
-        .order('created_at', { ascending: true });
+        .order('coin_total', { ascending: false, nullsFirst: false });
 
       const { data: nominations } = await supabase
         .from('nominations')
@@ -41,7 +41,6 @@ export default function HomePage() {
         .eq('month_year', monthYear);
 
       const playerCoins: PlayerWithCoins[] = (allPlayers ?? []).map((p) => {
-        if (p.role === 'pending') return { ...p, coins: null };
         const playerNoms = (nominations ?? []).filter((n) => n.to_player_id === p.id);
         const total = playerNoms.reduce((sum, n) => sum + n.coins, 0);
         return { ...p, coins: total };
