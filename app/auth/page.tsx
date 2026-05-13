@@ -41,6 +41,10 @@ export default function AuthPage() {
   }
 
   async function handleSignUp() {
+    if (!name.trim()) {
+      setError('Please enter your name');
+      return;
+    }
     setLoading('signup');
     setError('');
     const { error: signUpError } = await supabase.auth.signUp({ email, password });
@@ -107,15 +111,13 @@ export default function AuthPage() {
       </h1>
 
       <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: 20 }}>
-        {mode === 'signup' && (
-          <input
-            type="text"
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={inputStyle}
-          />
-        )}
+        <input
+          type="text"
+          placeholder="Your name e.g. Rajan"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          style={inputStyle}
+        />
         <input
           type="email"
           required
