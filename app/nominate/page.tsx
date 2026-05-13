@@ -61,7 +61,7 @@ export default function NominatePage() {
       category_id: selectedCategory.id,
       coins,
       note: note.trim() || null,
-      month_year: currentMonthYear(),
+      month: currentMonthYear(),
     });
     setSubmitting(false);
     if (error) {
