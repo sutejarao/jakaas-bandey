@@ -125,7 +125,7 @@ export default function ProfilePage() {
               <NominationCard
                 key={nom.id}
                 categoryEmoji={nom.category?.emoji || '🏅'}
-                categoryLabel={nom.category?.name || nom.category_id}
+                categoryLabel={nom.category?.name || ''}
                 coins={nom.coins}
                 fromName={fromPlayer?.name || 'Someone'}
                 note={nom.note}

@@ -25,6 +25,8 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState<'signin' | 'signup' | null>(null);
   const [error, setError] = useState('');
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
+  const [name, setName] = useState('');
 
   async function handleSignIn() {
     setLoading('signin');
@@ -63,11 +65,11 @@ export default function AuthPage() {
 
     if (!existingPlayer) {
       const userEmail = data.user.email ?? '';
-      const name = userEmail.split('@')[0] || 'New Player';
+      const playerName = name.trim() || userEmail.split('@')[0] || 'New Player';
       const avatar_url = (userEmail[0] || 'P').toUpperCase();
       await supabase
         .from('players')
-        .insert({ id: data.user.id, name, email: userEmail, role: 'pending', avatar_url })
+        .insert({ id: data.user.id, name: playerName, email: userEmail, role: 'pending', avatar_url })
         .select()
         .maybeSingle();
     }
@@ -105,6 +107,15 @@ export default function AuthPage() {
       </h1>
 
       <form onSubmit={handleSubmit} style={{ width: '100%', marginTop: 20 }}>
+        {mode === 'signup' && (
+          <input
+            type="text"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={inputStyle}
+          />
+        )}
         <input
           type="email"
           required
@@ -127,18 +138,18 @@ export default function AuthPage() {
         <div style={{ display: 'flex', gap: 10 }}>
           <button
             type="button"
-            onClick={handleSignIn}
+            onClick={mode === 'signup' ? () => setMode('signin') : handleSignIn}
             disabled={loading !== null}
-            className="btn-primary"
+            className={mode === 'signup' ? 'btn-secondary' : 'btn-primary'}
             style={{ flex: 1, padding: '16px', fontSize: 16 }}
           >
-            {loading === 'signin' ? 'Signing in…' : 'Sign in'}
+            {loading === 'signin' ? 'Signing in…' : mode === 'signup' ? '← Sign in' : 'Sign in'}
           </button>
           <button
             type="button"
-            onClick={handleSignUp}
+            onClick={mode === 'signin' ? () => setMode('signup') : handleSignUp}
             disabled={loading !== null}
-            className="btn-secondary"
+            className={mode === 'signin' ? 'btn-secondary' : 'btn-primary'}
             style={{ flex: 1, padding: '16px', fontSize: 16 }}
           >
             {loading === 'signup' ? 'Signing up…' : 'Sign up'}

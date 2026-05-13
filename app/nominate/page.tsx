@@ -68,6 +68,7 @@ export default function NominatePage() {
       setError(error.message);
     } else {
       setStep('success');
+      router.refresh();
       setTimeout(() => router.push('/'), 2000);
     }
   }

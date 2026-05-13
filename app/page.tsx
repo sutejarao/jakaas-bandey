@@ -42,7 +42,10 @@ export default function HomePage() {
       const playerCoins: PlayerWithCoins[] = (allPlayers ?? []).map((p) => {
         const playerNoms = (nominations ?? []).filter((n) => n.nominee_id === p.id);
         const total = playerNoms.reduce((sum, n) => sum + n.coins, 0);
-        return { ...p, coins: total };
+        const displayName = p.name.includes('@')
+          ? p.name.split('@')[0].charAt(0).toUpperCase() + p.name.split('@')[0].slice(1)
+          : p.name;
+        return { ...p, name: displayName, coins: total };
       });
 
       const sorted = [

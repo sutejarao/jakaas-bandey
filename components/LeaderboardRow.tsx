@@ -30,7 +30,6 @@ export default function LeaderboardRow({ rank, name, initial, coins, isMe = fals
         gap: 12,
         padding: '12px 16px',
         marginBottom: 10,
-        opacity: isPending ? 0.5 : 1,
       }}
     >
       <div style={{ width: 32, textAlign: 'center', fontSize: 20, flexShrink: 0 }}>
