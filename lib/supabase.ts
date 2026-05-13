@@ -32,6 +32,7 @@ export type Nomination = {
   created_at: string;
   nominator?: Player;
   nominee?: Player;
+  category?: { name: string; emoji: string } | null;
 };
 
 export type Category = {

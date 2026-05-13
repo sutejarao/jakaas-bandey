@@ -50,7 +50,7 @@ export default function NominationCard({
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <Image src="/jakaas_bandey/logo-coin.png" alt="coins" width={18} height={18} />
+          <Image src="/logo-coin.png" alt="coins" width={18} height={18} />
           <span style={{ fontWeight: 800, fontSize: 15, color: '#FFB300' }}>+{coins}</span>
         </div>
       </div>

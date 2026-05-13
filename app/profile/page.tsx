@@ -35,7 +35,7 @@ export default function ProfilePage() {
     async function fetchNominations() {
       const { data } = await supabase
         .from('nominations')
-        .select('*, nominator:players!nominations_nominator_id_fkey(name, avatar_url)')
+        .select('*, nominator:players!nominations_nominator_id_fkey(name, avatar_url), category:categories!nominations_category_id_fkey(name, emoji)')
         .eq('nominee_id', player!.id)
         .eq('month', currentMonthYear())
         .order('created_at', { ascending: false });
@@ -124,15 +124,8 @@ export default function ProfilePage() {
             return (
               <NominationCard
                 key={nom.id}
-                categoryEmoji={
-                  nom.category_id === 'Best catch' ? '🏅'
-                    : nom.category_id === 'Top scorer' ? '⭐'
-                    : nom.category_id === 'Best banter' ? '😂'
-                    : nom.category_id === 'Most effort' ? '💪'
-                    : nom.category_id === 'Match winner' ? '🎯'
-                    : '🤝'
-                }
-                categoryLabel={nom.category_id}
+                categoryEmoji={nom.category?.emoji || '🏅'}
+                categoryLabel={nom.category?.name || nom.category_id}
                 coins={nom.coins}
                 fromName={fromPlayer?.name || 'Someone'}
                 note={nom.note}
