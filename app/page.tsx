@@ -9,6 +9,15 @@ import MonthBanner from '@/components/MonthBanner';
 import LeaderboardRow from '@/components/LeaderboardRow';
 import { currentMonthYear } from '@/lib/supabase';
 
+type NominationDetail = {
+  nominator_id: string;
+  nominatorName: string;
+  coins: number;
+  note: string | null;
+  categoryName: string;
+  categoryEmoji: string;
+};
+
 type PlayerWithCoins = {
   id: string;
   name: string;
@@ -16,6 +25,8 @@ type PlayerWithCoins = {
   role: string;
   avatar_url: string | null;
   coins: number | null;
+  nominations: NominationDetail[];
+  categories: Array<{ name: string; emoji: string }>;
 };
 
 export default function HomePage() {
@@ -36,7 +47,7 @@ export default function HomePage() {
 
       const { data: nominations } = await supabase
         .from('nominations')
-        .select('nominee_id, coins')
+        .select('nominee_id, coins, note, nominator_id, nominator:players!nominations_nominator_id_fkey(name), category:categories!nominations_category_id_fkey(name, emoji)')
         .eq('month', monthYear);
 
       const playerCoins: PlayerWithCoins[] = (allPlayers ?? []).map((p) => {
@@ -45,7 +56,26 @@ export default function HomePage() {
         const displayName = p.name.includes('@')
           ? p.name.split('@')[0].charAt(0).toUpperCase() + p.name.split('@')[0].slice(1)
           : p.name;
-        return { ...p, name: displayName, coins: total };
+
+        const nominationDetails: NominationDetail[] = playerNoms.map((n) => {
+          const nominator = Array.isArray(n.nominator) ? n.nominator[0] : n.nominator;
+          const category = Array.isArray(n.category) ? n.category[0] : n.category;
+          return {
+            nominator_id: n.nominator_id,
+            nominatorName: (nominator as { name: string } | null)?.name || 'Someone',
+            coins: n.coins,
+            note: n.note ?? null,
+            categoryName: (category as { name: string; emoji: string } | null)?.name || '',
+            categoryEmoji: (category as { name: string; emoji: string } | null)?.emoji || '🏅',
+          };
+        });
+
+        const seen = new Set<string>();
+        const categories = nominationDetails
+          .map((n) => ({ name: n.categoryName, emoji: n.categoryEmoji }))
+          .filter((c) => { if (seen.has(c.name)) return false; seen.add(c.name); return true; });
+
+        return { ...p, name: displayName, coins: total, nominations: nominationDetails, categories };
       });
 
       const sorted = [
@@ -120,6 +150,8 @@ export default function HomePage() {
                 initial={(entry.avatar_url || entry.name.charAt(0)).toUpperCase()}
                 coins={entry.coins}
                 isMe={entry.id === player?.id}
+                nominations={entry.nominations}
+                categories={entry.categories}
               />
             ))}
             {pendingEntries.map((entry) => (
@@ -131,6 +163,8 @@ export default function HomePage() {
                 coins={null}
                 isMe={entry.id === player?.id}
                 isPending
+                nominations={entry.nominations}
+                categories={entry.categories}
               />
             ))}
           </>
