@@ -94,7 +94,7 @@ export default function AuthPage() {
       }}
     >
       <Image
-        src="/jakaas_bandey/logo-coin.png"
+        src="/logo-coin.png"
         alt="JB Coin"
         width={200}
         height={200}

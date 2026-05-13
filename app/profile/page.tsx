@@ -78,7 +78,7 @@ export default function ProfilePage() {
           }}
         >
           {[
-            { label: 'Coins', value: stats.totalCoins, icon: '/ logo-coin.png' },
+            { label: 'Coins', value: stats.totalCoins, icon: '/logo-coin.png' },
             { label: 'Nominations', value: stats.nominationCount, icon: null },
             { label: 'Categories', value: stats.categoryCount, icon: null },
           ].map(({ label, value, icon }) => (
@@ -110,7 +110,7 @@ export default function ProfilePage() {
         ) : nominations.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
             <Image
-              src="/jakaas_bandey/illustrations/illus-empty-feed.png"
+              src="/illustrations/illus-empty-feed.png"
               alt="No nominations"
               width={160}
               height={130}

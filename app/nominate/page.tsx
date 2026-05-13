@@ -88,7 +88,7 @@ export default function NominatePage() {
         }}
       >
         <Image
-          src="/jakaas_bandey/illustrations/illus-nomination-sent.png"
+          src="/illustrations/illus-nomination-sent.png"
           alt="Nomination sent"
           width={220}
           height={180}
