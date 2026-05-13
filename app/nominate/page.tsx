@@ -47,7 +47,7 @@ export default function NominatePage() {
     supabase
       .from('categories')
       .select('*')
-      .order('label')
+      .order('name')
       .then(({ data }) => setCategories(data || []));
   }, [player]);
 
