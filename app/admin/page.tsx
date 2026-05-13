@@ -59,7 +59,7 @@ export default function AdminPage() {
       supabase
         .from('nominations')
         .select('nominee_id, coins, players!nominations_nominee_id_fkey(name, avatar_initial)')
-        .eq('month_year', my),
+        .eq('month', my),
       supabase.from('players').select('*').order('name'),
     ]);
 
@@ -107,12 +107,12 @@ export default function AdminPage() {
     for (const stat of playerStats) {
       await supabase.from('monthly_results').upsert({
         player_id: stat.id,
-        month_year: monthYear,
+        month: monthYear,
         total_coins: stat.totalCoins,
         rank: playerStats.indexOf(stat) + 1,
       });
     }
-    await supabase.from('nominations').delete().eq('month_year', monthYear);
+    await supabase.from('nominations').delete().eq('month', monthYear);
     setResetting(false);
     setShowResetModal(false);
     setResetDone(true);

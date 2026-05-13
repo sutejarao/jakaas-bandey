@@ -37,7 +37,7 @@ export default function ProfilePage() {
         .from('nominations')
         .select('*, from_player:players!nominations_nominator_id_fkey(name, avatar_initial)')
         .eq('nominee_id', player!.id)
-        .eq('month_year', currentMonthYear())
+        .eq('month', currentMonthYear())
         .order('created_at', { ascending: false });
 
       if (data) {
